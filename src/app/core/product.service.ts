@@ -41,9 +41,9 @@ export class ProductService {
     return this.http.post<Category>(`${this.base}/categories`, { name, slug });
   }
 
-  uploadImage(file: File): Observable<{ code: string; url: string; contentType: string }> {
+  uploadImage(file: File): Observable<{ code: string; url: string; previewUrl: string; contentType: string }> {
     const fd = new FormData();
     fd.append('file', file);
-    return this.http.post<{ code: string; url: string; contentType: string }>(`${this.base}/images`, fd);
+    return this.http.post<{ code: string; url: string; previewUrl: string; contentType: string }>(`${this.base}/images`, fd);
   }
 }

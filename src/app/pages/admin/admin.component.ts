@@ -138,7 +138,7 @@ export class AdminComponent implements OnInit {
     this.productSvc.uploadImage(this.selectedFile).subscribe({
       next: res => {
         this.uploading.set(false);
-        this.uploadPreviews.push(res.url);
+        this.uploadPreviews.push(res.previewUrl);
         const existing = this.form.imageUrlsRaw.trim();
         this.form.imageUrlsRaw = existing ? `${existing}, ${res.url}` : res.url;
         this.selectedFile = null;
