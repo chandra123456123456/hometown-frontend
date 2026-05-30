@@ -74,7 +74,10 @@ export class ProductDetailComponent implements OnInit {
 
   addToCart(): void {
     const p = this.product();
-    if (p) this.cartSvc.add(p.id, this.quantity);
+    if (p) {
+      this.cartSvc.add(p.id, this.quantity);
+      this.analytics.track('ADD_TO_CART', { productId: p.id, sellerId: p.sellerId ?? undefined });
+    }
   }
 
   checkDelivery(): void {

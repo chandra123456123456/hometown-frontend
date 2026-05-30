@@ -48,7 +48,7 @@
           </mat-card-content>
           <mat-card-actions>
             <button mat-raised-button color="primary"
-                    (click)="addToCart(product.id); $event.stopPropagation()"
+                    (click)="addToCart(product); $event.stopPropagation()"
                     [disabled]="product.stock === 0">
               <mat-icon>add_shopping_cart</mat-icon>
               {{ product.stock === 0 ? 'Out of stock' : 'Add to cart' }}

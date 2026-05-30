@@ -89,8 +89,9 @@ export class CatalogComponent implements OnInit {
     this.loadProducts();
   }
 
-  addToCart(productId: number): void {
-    this.cartSvc.add(productId);
+  addToCart(product: Product): void {
+    this.cartSvc.add(product.id);
+    this.analytics.track('ADD_TO_CART', { productId: product.id, sellerId: product.sellerId ?? undefined });
   }
 
   imageUrl(product: Product): string {
