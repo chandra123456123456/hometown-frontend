@@ -115,6 +115,19 @@
   font-weight: 600;
 }
 
+.stock-note {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.85rem;
+  color: #2e7d32;
+  padding: 4px 8px;
+
+  &.out { color: #c62828; }
+
+  mat-icon { font-size: 18px; height: 18px; width: 18px; }
+}
+
 .spinner-wrap {
   display: flex;
   justify-content: center;

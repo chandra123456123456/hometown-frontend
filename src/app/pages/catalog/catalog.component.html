@@ -79,12 +79,19 @@
             <app-star-rating [rating]="product.avgRating || 0" [count]="product.reviewCount || 0" />
           </mat-card-content>
           <mat-card-actions>
-            <button mat-raised-button color="primary"
-                    (click)="addToCart(product); $event.stopPropagation()"
-                    [disabled]="product.stock === 0">
-              <mat-icon>add_shopping_cart</mat-icon>
-              {{ product.stock === 0 ? 'Out of stock' : 'Add to cart' }}
-            </button>
+            @if (auth.isAdmin()) {
+              <span class="stock-note" [class.out]="product.stock === 0">
+                <mat-icon>{{ product.stock === 0 ? 'cancel' : 'inventory_2' }}</mat-icon>
+                {{ product.stock === 0 ? 'Out of stock' : product.stock + ' in stock' }}
+              </span>
+            } @else {
+              <button mat-raised-button color="primary"
+                      (click)="addToCart(product); $event.stopPropagation()"
+                      [disabled]="product.stock === 0">
+                <mat-icon>add_shopping_cart</mat-icon>
+                {{ product.stock === 0 ? 'Out of stock' : 'Add to cart' }}
+              </button>
+            }
           </mat-card-actions>
         </mat-card>
       }

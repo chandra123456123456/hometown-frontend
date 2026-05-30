@@ -41,6 +41,7 @@
 
         <p class="description">{{ p.description }}</p>
 
+        @if (!auth.isAdmin()) {
         <div class="add-to-cart-row">
           <mat-form-field appearance="outline" class="qty-field">
             <mat-label>Qty</mat-label>
@@ -52,6 +53,7 @@
             {{ p.stock === 0 ? 'Out of stock' : 'Add to cart' }}
           </button>
         </div>
+        }
 
         <div class="delivery-check">
           <h3>Check delivery</h3>

@@ -18,6 +18,10 @@ export class CartService {
   count = computed(() => this._items().reduce((n, i) => n + i.quantity, 0));
 
   async load(): Promise<void> {
+    if (this.auth.isAdmin()) {
+      this._items.set([]);
+      return;
+    }
     if (this.auth.isLoggedIn()) {
       const cart = await firstValueFrom(this.http.get<Cart>(this.base));
       this._items.set(cart.items ?? []);
@@ -62,6 +66,11 @@ export class CartService {
 
   // Called right after a successful login: merge the guest cart server-side.
   async flushAfterLogin(): Promise<void> {
+    if (this.auth.isAdmin()) {
+      localStorage.removeItem(CART_KEY);
+      this._items.set([]);
+      return;
+    }
     const guest = this.readLocal();
     if (guest.length) {
       await firstValueFrom(this.http.post(`${this.base}/flush`, { items: guest }));

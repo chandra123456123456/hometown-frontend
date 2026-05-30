@@ -12,10 +12,12 @@
 
   @if (!isHandset()) {
     <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Shop</a>
-    <a mat-button routerLink="/cart" routerLinkActive="active">
-      <mat-icon [matBadge]="cart.count()" matBadgeColor="accent" [matBadgeHidden]="cart.count() === 0">shopping_cart</mat-icon>
-      Cart
-    </a>
+    @if (!auth.isAdmin()) {
+      <a mat-button routerLink="/cart" routerLinkActive="active">
+        <mat-icon [matBadge]="cart.count()" matBadgeColor="accent" [matBadgeHidden]="cart.count() === 0">shopping_cart</mat-icon>
+        Cart
+      </a>
+    }
     @if (auth.isAdmin()) {
       <a mat-button routerLink="/admin" routerLinkActive="active">Admin</a>
     }
@@ -42,7 +44,9 @@
   <mat-sidenav [opened]="isHandset() && drawerOpen()" mode="over" (closed)="closeDrawer()">
     <mat-nav-list (click)="closeDrawer()">
       <a mat-list-item routerLink="/">Shop</a>
-      <a mat-list-item routerLink="/cart">Cart ({{ cart.count() }})</a>
+      @if (!auth.isAdmin()) {
+        <a mat-list-item routerLink="/cart">Cart ({{ cart.count() }})</a>
+      }
       @if (auth.isLoggedIn()) {
         <a mat-list-item routerLink="/account">My Orders</a>
         @if (auth.isAdmin()) {
@@ -68,10 +72,12 @@
         <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
           <mat-icon>home</mat-icon><span>Home</span>
         </a>
-        <a routerLink="/cart" routerLinkActive="active">
-          <mat-icon [matBadge]="cart.count()" matBadgeColor="accent" [matBadgeHidden]="cart.count() === 0">shopping_cart</mat-icon>
-          <span>Cart</span>
-        </a>
+        @if (!auth.isAdmin()) {
+          <a routerLink="/cart" routerLinkActive="active">
+            <mat-icon [matBadge]="cart.count()" matBadgeColor="accent" [matBadgeHidden]="cart.count() === 0">shopping_cart</mat-icon>
+            <span>Cart</span>
+          </a>
+        }
         <a [routerLink]="auth.isLoggedIn() ? '/account' : '/login'" routerLinkActive="active">
           <mat-icon>person</mat-icon><span>Account</span>
         </a>

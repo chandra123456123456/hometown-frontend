@@ -17,6 +17,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ProductService } from '../../core/product.service';
 import { CartService } from '../../core/cart.service';
 import { AnalyticsService } from '../../core/analytics.service';
+import { AuthService } from '../../core/auth.service';
 import { Category, Product } from '../../core/models';
 import { encodeId } from '../../core/id-codec';
 import { ProtectImageDirective } from '../../core/protect-image.directive';
@@ -40,6 +41,7 @@ export class CatalogComponent implements OnInit {
   private productSvc = inject(ProductService);
   private cartSvc = inject(CartService);
   private analytics = inject(AnalyticsService);
+  auth = inject(AuthService);
 
   categories = signal<Category[]>([]);
   products = signal<Product[]>([]);
