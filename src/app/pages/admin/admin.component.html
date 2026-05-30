@@ -1,8 +1,14 @@
 <div class="admin-page">
-  <h1 class="page-title">
-    <mat-icon>admin_panel_settings</mat-icon>
-    Admin — Product Management
-  </h1>
+  <div class="admin-page-header">
+    <h1 class="page-title">
+      <mat-icon>admin_panel_settings</mat-icon>
+      Admin — Product Management
+    </h1>
+    <a mat-raised-button color="accent" routerLink="/admin/orders">
+      <mat-icon>receipt_long</mat-icon>
+      Manage Orders
+    </a>
+  </div>
 
   <!-- Add Category -->
   <mat-card class="cat-card">

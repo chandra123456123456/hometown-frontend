@@ -28,6 +28,7 @@
         <a mat-menu-item routerLink="/account">My Orders</a>
         @if (auth.isAdmin()) {
           <a mat-menu-item routerLink="/admin/metrics">Seller Metrics</a>
+          <a mat-menu-item routerLink="/admin/orders">Manage Orders</a>
         }
         <button mat-menu-item (click)="logout()">Logout</button>
       </mat-menu>
@@ -47,6 +48,7 @@
         @if (auth.isAdmin()) {
           <a mat-list-item routerLink="/admin">Admin Dashboard</a>
           <a mat-list-item routerLink="/admin/metrics">Seller Metrics</a>
+          <a mat-list-item routerLink="/admin/orders">Manage Orders</a>
         }
         <a mat-list-item (click)="logout()">Logout</a>
       } @else {

@@ -1,0 +1,68 @@
+<div class="admin-orders-page">
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>receipt_long</mat-icon>
+      Order Management
+    </h1>
+    <a mat-stroked-button routerLink="/admin">
+      <mat-icon>arrow_back</mat-icon>
+      Admin Dashboard
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-spinner diameter="48"></mat-spinner>
+      <p>Loading orders&hellip;</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <p>No orders yet.</p>
+    </div>
+  } @else {
+    <p class="order-count">{{ orders().length }} order{{ orders().length === 1 ? '' : 's' }}</p>
+    <div class="orders-grid">
+      @for (order of orders(); track order.id) {
+        <mat-card class="order-card">
+          <mat-card-header>
+            <mat-card-title class="order-id">Order #{{ order.id }}</mat-card-title>
+            <mat-card-subtitle>User {{ order.userId }} &bull; {{ order.createdAt | date:'mediumDate' }}</mat-card-subtitle>
+            <span class="status-chip {{ statusClass(order.status) }}">{{ order.status }}</span>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="order-meta">
+              <div class="meta-row">
+                <mat-icon>inventory_2</mat-icon>
+                <span>{{ order.items.length }} item{{ order.items.length === 1 ? '' : 's' }}</span>
+              </div>
+              <div class="meta-row">
+                <mat-icon>local_shipping</mat-icon>
+                <span>{{ order.shippingPartner }} &mdash; est. {{ order.estimatedDeliveryDays }} day{{ order.estimatedDeliveryDays === 1 ? '' : 's' }}</span>
+              </div>
+              <div class="meta-row total-row">
+                <mat-icon>payments</mat-icon>
+                <span class="total-amount">&#8377;{{ order.totalAmount | number:'1.2-2' }}</span>
+              </div>
+            </div>
+
+            <mat-form-field appearance="outline" class="status-select">
+              <mat-label>Status</mat-label>
+              <mat-select [value]="order.status" (selectionChange)="onStatusChange(order, $event.value)">
+                @for (s of statuses; track s) {
+                  <mat-option [value]="s">{{ s }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

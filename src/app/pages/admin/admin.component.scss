@@ -7,6 +7,14 @@
   gap: 24px;
 }
 
+.admin-page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
 .page-title {
   display: flex;
   align-items: center;
