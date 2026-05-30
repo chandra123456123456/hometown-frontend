@@ -38,20 +38,26 @@
               }
             </mat-form-field>
 
-            <mat-form-field appearance="outline" class="full-width">
-              <mat-label>Pincode</mat-label>
-              <input
-                matInput
-                [(ngModel)]="destPincode"
-                name="destPincode"
-                (ngModelChange)="onPincodeChange()"
-                maxlength="6"
-                placeholder="6-digit pincode"
-                required />
-              @if (pincodeInvalid()) {
-                <mat-error>Enter a valid 6-digit pincode.</mat-error>
-              }
-            </mat-form-field>
+            <div class="pincode-row">
+              <mat-form-field appearance="outline" class="pincode-field">
+                <mat-label>Pincode</mat-label>
+                <input
+                  matInput
+                  [(ngModel)]="destPincode"
+                  name="destPincode"
+                  (ngModelChange)="onPincodeChange()"
+                  maxlength="6"
+                  placeholder="6-digit pincode"
+                  required />
+                @if (pincodeInvalid()) {
+                  <mat-error>Enter a valid 6-digit pincode.</mat-error>
+                }
+              </mat-form-field>
+              <button mat-stroked-button type="button" class="location-btn" (click)="useMyLocation()">
+                <mat-icon>my_location</mat-icon>
+                Use my location
+              </button>
+            </div>
           </mat-card-content>
         </mat-card>
 

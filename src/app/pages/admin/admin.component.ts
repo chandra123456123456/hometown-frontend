@@ -29,6 +29,10 @@ interface ProductForm {
   active: boolean;
   antique: boolean;
   imageUrlsRaw: string;
+  weightGrams: number | null;
+  lengthCm: number | null;
+  widthCm: number | null;
+  heightCm: number | null;
 }
 
 function emptyForm(): ProductForm {
@@ -42,6 +46,10 @@ function emptyForm(): ProductForm {
     active: true,
     antique: false,
     imageUrlsRaw: '',
+    weightGrams: null,
+    lengthCm: null,
+    widthCm: null,
+    heightCm: null,
   };
 }
 
@@ -120,6 +128,10 @@ export class AdminComponent implements OnInit {
       active: product.active,
       antique: product.antique ?? false,
       imageUrlsRaw: product.imageUrls?.join(', ') ?? '',
+      weightGrams: null,
+      lengthCm: null,
+      widthCm: null,
+      heightCm: null,
     };
     this.formPanelOpen = true;
   }
@@ -167,7 +179,7 @@ export class AdminComponent implements OnInit {
       .map(s => s.trim())
       .filter(Boolean);
 
-    const body: Partial<Product> = {
+    const body: any = {
       name: this.form.name,
       description: this.form.description,
       price: this.form.price!,
@@ -178,6 +190,10 @@ export class AdminComponent implements OnInit {
       antique: this.form.antique,
       imageUrls,
     };
+    if (this.form.weightGrams != null) body['weightGrams'] = this.form.weightGrams;
+    if (this.form.lengthCm != null) body['lengthCm'] = this.form.lengthCm;
+    if (this.form.widthCm != null) body['widthCm'] = this.form.widthCm;
+    if (this.form.heightCm != null) body['heightCm'] = this.form.heightCm;
 
     const op = this.editingId != null
       ? this.productSvc.update(this.editingId, body)

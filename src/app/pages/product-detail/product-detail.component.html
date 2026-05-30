@@ -73,6 +73,9 @@
                 Check
               }
             </button>
+            <button mat-icon-button type="button" (click)="useMyLocation()" title="Use my location">
+              <mat-icon>my_location</mat-icon>
+            </button>
           </div>
 
           @if (shippingResult(); as opt) {

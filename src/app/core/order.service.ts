@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Order, OrderLine } from './models';
+import { Order, OrderLine, ShippingOption } from './models';
 
 export interface CreateOrderRequest {
   items: OrderLine[];
@@ -44,5 +44,9 @@ export class OrderService {
       ok: boolean;
       issues: { productId: number; requested: number; available: number }[];
     }>(`${this.base}/validate-stock`, { items });
+  }
+
+  shippingQuote(items: { productId: number; quantity: number }[], pincode: string): Observable<ShippingOption[]> {
+    return this.http.post<ShippingOption[]>(`${this.base}/shipping-quote`, { items, pincode });
   }
 }

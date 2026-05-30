@@ -197,6 +197,28 @@
         </div>
       }
 
+      <div class="form-row">
+        <span class="dims-label">Shipping details (internal — not shown to customers)</span>
+      </div>
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Weight (g)</mat-label>
+          <input matInput type="number" min="0" [(ngModel)]="form.weightGrams" placeholder="e.g. 500" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Length (cm)</mat-label>
+          <input matInput type="number" min="0" [(ngModel)]="form.lengthCm" placeholder="e.g. 30" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Width (cm)</mat-label>
+          <input matInput type="number" min="0" [(ngModel)]="form.widthCm" placeholder="e.g. 20" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Height (cm)</mat-label>
+          <input matInput type="number" min="0" [(ngModel)]="form.heightCm" placeholder="e.g. 10" />
+        </mat-form-field>
+      </div>
+
       <div class="form-row form-row-actions">
         <mat-slide-toggle [(ngModel)]="form.active" color="primary">Active</mat-slide-toggle>
         <mat-slide-toggle [(ngModel)]="form.antique" color="accent">Antique (one-of-a-kind)</mat-slide-toggle>

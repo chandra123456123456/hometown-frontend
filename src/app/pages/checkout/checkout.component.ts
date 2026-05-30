@@ -19,7 +19,6 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { CartService } from '../../core/cart.service';
 import { ProductService } from '../../core/product.service';
 import { OrderService } from '../../core/order.service';
-import { ShippingService } from '../../core/shipping.service';
 import { AnalyticsService } from '../../core/analytics.service';
 import { Product, ShippingOption } from '../../core/models';
 import { environment } from '../../../environments/environment';
@@ -57,7 +56,6 @@ export class CheckoutComponent implements OnInit {
   private cartSvc = inject(CartService);
   private productSvc = inject(ProductService);
   private orderSvc = inject(OrderService);
-  private shippingSvc = inject(ShippingService);
   private analytics = inject(AnalyticsService);
   private http = inject(HttpClient);
   private router = inject(Router);
@@ -121,7 +119,8 @@ export class CheckoutComponent implements OnInit {
     }
     this.loadingShipping.set(true);
     this.shippingError.set('');
-    this.shippingSvc.quotes(this.destPincode).subscribe({
+    const cartItems = this.cartSvc.items().map(i => ({ productId: i.productId, quantity: i.quantity }));
+    this.orderSvc.shippingQuote(cartItems, this.destPincode).subscribe({
       next: opts => {
         const serviceable = opts.filter(o => o.serviceable);
         this.shippingOptions.set(serviceable);
@@ -229,6 +228,32 @@ export class CheckoutComponent implements OnInit {
         this.snackBar.open('Failed to place order. Please try again.', 'Close', { duration: 4000 });
       },
     });
+  }
+
+  useMyLocation(): void {
+    if (!navigator.geolocation) {
+      this.snackBar.open('Geolocation is not supported by your browser.', 'Close', { duration: 3000 });
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
+          .then(r => r.json())
+          .then((data: any) => {
+            const postcode: string = data?.address?.postcode ?? '';
+            const pin = postcode.replace(/\D/g, '').slice(0, 6);
+            if (pin.length === 6) {
+              this.destPincode = pin;
+              this.onPincodeChange();
+            } else {
+              this.snackBar.open('Could not determine pincode from your location.', 'Close', { duration: 3000 });
+            }
+          })
+          .catch(() => this.snackBar.open('Reverse geocoding failed. Please enter pincode manually.', 'Close', { duration: 3000 }));
+      },
+      () => this.snackBar.open('Location access denied. Please enter pincode manually.', 'Close', { duration: 3000 }),
+    );
   }
 
   imageUrl(product: Product): string {

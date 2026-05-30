@@ -16,7 +16,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { ProductService } from '../../core/product.service';
 import { CartService } from '../../core/cart.service';
 import { AnalyticsService } from '../../core/analytics.service';
-import { ShippingService } from '../../core/shipping.service';
+import { OrderService } from '../../core/order.service';
 import { AuthService } from '../../core/auth.service';
 import { Product, Review, ShippingOption } from '../../core/models';
 import { decodeId } from '../../core/id-codec';
@@ -41,7 +41,7 @@ export class ProductDetailComponent implements OnInit {
   private productSvc = inject(ProductService);
   private cartSvc = inject(CartService);
   private analytics = inject(AnalyticsService);
-  private shippingSvc = inject(ShippingService);
+  private orderSvc = inject(OrderService);
   private snackBar = inject(MatSnackBar);
   auth = inject(AuthService);
 
@@ -130,15 +130,18 @@ export class ProductDetailComponent implements OnInit {
   }
 
   checkDelivery(): void {
-    if (!this.pincode.trim()) return;
+    const pin = this.pincode.trim();
+    if (!pin || !this.product()) return;
     this.shippingLoading.set(true);
     this.shippingResult.set(null);
     this.shippingNotServiceable.set(false);
-    this.shippingSvc.estimate(this.pincode.trim()).subscribe({
-      next: opt => {
+    this.orderSvc.shippingQuote([{ productId: this.product()!.id, quantity: 1 }], pin).subscribe({
+      next: opts => {
         this.shippingLoading.set(false);
-        if (opt.serviceable) {
-          this.shippingResult.set(opt);
+        const serviceable = opts.filter(o => o.serviceable);
+        if (serviceable.length) {
+          const best = serviceable.reduce((a, b) => a.charge <= b.charge ? a : b);
+          this.shippingResult.set(best);
         } else {
           this.shippingNotServiceable.set(true);
         }
@@ -148,6 +151,32 @@ export class ProductDetailComponent implements OnInit {
         this.shippingNotServiceable.set(true);
       },
     });
+  }
+
+  useMyLocation(): void {
+    if (!navigator.geolocation) {
+      this.snackBar.open('Geolocation is not supported by your browser.', 'Close', { duration: 3000 });
+      return;
+    }
+    navigator.geolocation.getCurrentPosition(
+      pos => {
+        const { latitude: lat, longitude: lon } = pos.coords;
+        fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}&zoom=18&addressdetails=1`)
+          .then(r => r.json())
+          .then((data: any) => {
+            const postcode: string = data?.address?.postcode ?? '';
+            const pin = postcode.replace(/\D/g, '').slice(0, 6);
+            if (pin.length === 6) {
+              this.pincode = pin;
+              this.checkDelivery();
+            } else {
+              this.snackBar.open('Could not determine pincode from your location.', 'Close', { duration: 3000 });
+            }
+          })
+          .catch(() => this.snackBar.open('Reverse geocoding failed. Please enter pincode manually.', 'Close', { duration: 3000 }));
+      },
+      () => this.snackBar.open('Location access denied. Please enter pincode manually.', 'Close', { duration: 3000 }),
+    );
   }
 
   imageUrl(product: Product): string {
