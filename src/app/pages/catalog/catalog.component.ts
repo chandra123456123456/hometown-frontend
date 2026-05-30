@@ -19,6 +19,7 @@ import { AnalyticsService } from '../../core/analytics.service';
 import { Category, Product } from '../../core/models';
 import { encodeId } from '../../core/id-codec';
 import { ProtectImageDirective } from '../../core/protect-image.directive';
+import { StarRatingComponent } from '../../core/star-rating.component';
 
 @Component({
   selector: 'app-catalog',
@@ -28,7 +29,7 @@ import { ProtectImageDirective } from '../../core/protect-image.directive';
     MatCardModule, MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatChipsModule, MatPaginatorModule, MatProgressSpinnerModule,
-    ProtectImageDirective,
+    ProtectImageDirective, StarRatingComponent,
   ],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.scss',

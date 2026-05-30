@@ -45,6 +45,7 @@
                 <span class="price">₹{{ product.price }}</span>
               }
             </div>
+            <app-star-rating [rating]="product.avgRating || 0" [count]="product.reviewCount || 0" />
           </mat-card-content>
           <mat-card-actions>
             <button mat-raised-button color="primary"

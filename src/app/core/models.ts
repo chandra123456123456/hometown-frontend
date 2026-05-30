@@ -16,6 +16,17 @@ export interface Product {
   active: boolean;
   sellerId: number | null;
   imageUrls: string[];
+  avgRating?: number;
+  reviewCount?: number;
+}
+
+export interface Review {
+  id: number;
+  productId: number;
+  reviewerName: string;
+  rating: number;
+  comment: string;
+  createdAt: string;
 }
 
 export interface Page<T> {

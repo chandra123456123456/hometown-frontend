@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Category, Page, Product } from './models';
+import { Category, Page, Product, Review } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -35,6 +35,14 @@ export class ProductService {
 
   remove(id: number): Observable<void> {
     return this.http.delete<void>(`${this.base}/products/${id}`);
+  }
+
+  getReviews(productId: number): Observable<Review[]> {
+    return this.http.get<Review[]>(`${this.base}/products/${productId}/reviews`);
+  }
+
+  addReview(productId: number, rating: number, comment: string): Observable<Review> {
+    return this.http.post<Review>(`${this.base}/products/${productId}/reviews`, { rating, comment });
   }
 
   createCategory(name: string, slug: string): Observable<Category> {

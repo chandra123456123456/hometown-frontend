@@ -30,6 +30,10 @@
           }
         </div>
 
+        <div class="avg-rating-row">
+          <app-star-rating [rating]="p.avgRating || 0" [count]="p.reviewCount || 0" />
+        </div>
+
         <p class="stock-status" [class.in-stock]="p.stock > 0" [class.out-of-stock]="p.stock === 0">
           <mat-icon>{{ p.stock > 0 ? 'check_circle' : 'cancel' }}</mat-icon>
           {{ p.stock > 0 ? 'In stock' : 'Out of stock' }}
@@ -78,6 +82,63 @@
             </p>
           }
         </div>
+      </div>
+    </div>
+
+    <!-- Reviews section -->
+    <div class="reviews-section">
+      <h2 class="reviews-heading">Reviews</h2>
+
+      @if (reviews().length === 0) {
+        <p class="no-reviews">No reviews yet. Be the first to review this product!</p>
+      } @else {
+        <div class="reviews-list">
+          @for (review of reviews(); track review.id) {
+            <div class="review-card">
+              <div class="review-header">
+                <span class="reviewer-name">{{ review.reviewerName }}</span>
+                <app-star-rating [rating]="review.rating" />
+                <span class="review-date">{{ review.createdAt | date:'mediumDate' }}</span>
+              </div>
+              <p class="review-comment">{{ review.comment }}</p>
+            </div>
+          }
+        </div>
+      }
+
+      <div class="review-form-wrap">
+        @if (auth.isLoggedIn()) {
+          <h3 class="review-form-title">Leave a Review</h3>
+          <div class="review-form">
+            <mat-form-field appearance="outline" class="rating-field">
+              <mat-label>Your rating</mat-label>
+              <mat-select [(ngModel)]="newRating">
+                @for (opt of ratingOptions; track opt) {
+                  <mat-option [value]="opt">{{ opt }} star{{ opt > 1 ? 's' : '' }}</mat-option>
+                }
+              </mat-select>
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="comment-field">
+              <mat-label>Your comment</mat-label>
+              <textarea matInput [(ngModel)]="newComment" rows="3" placeholder="Share your experience…"></textarea>
+            </mat-form-field>
+
+            <button mat-raised-button color="primary"
+                    (click)="submitReview()"
+                    [disabled]="submitting() || !newComment.trim()">
+              @if (submitting()) {
+                <mat-spinner diameter="18" />
+              } @else {
+                Submit Review
+              }
+            </button>
+          </div>
+        } @else {
+          <p class="login-prompt">
+            <a routerLink="/login">Log in</a> to leave a review.
+          </p>
+        }
       </div>
     </div>
     }
