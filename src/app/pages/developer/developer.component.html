@@ -1,0 +1,118 @@
+<div class="dev-page">
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>terminal</mat-icon>
+      API Audit Log
+    </h1>
+  </div>
+
+  <mat-card class="hint-card">
+    <mat-card-content>
+      <mat-icon class="hint-icon">info_outline</mat-icon>
+      <span>This shows every /api call (method, path, status, who, latency) — use it to trace how an order was handled (validate-stock &rarr; shipping-quote &rarr; orders &rarr; payments).</span>
+    </mat-card-content>
+  </mat-card>
+
+  <div class="filters-row">
+    <mat-form-field appearance="outline" class="filter-field">
+      <mat-label>Filter by path</mat-label>
+      <input matInput [(ngModel)]="filterPath" placeholder="/api/orders" />
+      <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="filter-field filter-field--narrow">
+      <mat-label>Filter by status</mat-label>
+      <input matInput type="number" [(ngModel)]="filterStatus" placeholder="200" />
+    </mat-form-field>
+
+    <button mat-flat-button color="primary" (click)="load()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+  </div>
+
+  @if (loading()) {
+    <div class="state-box">
+      <mat-icon class="spin">sync</mat-icon>
+      <p>Loading&hellip;</p>
+    </div>
+  } @else if (error()) {
+    <div class="state-box state-error">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (logs().length === 0) {
+    <div class="state-box">
+      <mat-icon>receipt_long</mat-icon>
+      <p>No API calls logged yet.</p>
+    </div>
+  } @else {
+    <p class="summary">Showing {{ logs().length }} calls</p>
+
+    <!-- desktop table -->
+    <div class="table-wrap">
+      <table mat-table [dataSource]="logs()" class="audit-table">
+        <ng-container matColumnDef="time">
+          <th mat-header-cell *matHeaderCellDef>Time</th>
+          <td mat-cell *matCellDef="let r">{{ r.createdAt | date:'HH:mm:ss' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="method">
+          <th mat-header-cell *matHeaderCellDef>Method</th>
+          <td mat-cell *matCellDef="let r">
+            <span class="method-chip method-{{ r.method.toLowerCase() }}">{{ r.method }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="path">
+          <th mat-header-cell *matHeaderCellDef>Path</th>
+          <td mat-cell *matCellDef="let r" class="path-cell">{{ r.path }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="status">
+          <th mat-header-cell *matHeaderCellDef>Status</th>
+          <td mat-cell *matCellDef="let r">
+            <span class="status-badge {{ statusClass(r.status) }}">{{ r.status }}</span>
+          </td>
+        </ng-container>
+
+        <ng-container matColumnDef="user">
+          <th mat-header-cell *matHeaderCellDef>User</th>
+          <td mat-cell *matCellDef="let r">{{ r.userId ?? '-' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="role">
+          <th mat-header-cell *matHeaderCellDef>Role</th>
+          <td mat-cell *matCellDef="let r">{{ r.role ?? 'guest' }}</td>
+        </ng-container>
+
+        <ng-container matColumnDef="latency">
+          <th mat-header-cell *matHeaderCellDef>Latency</th>
+          <td mat-cell *matCellDef="let r">{{ r.durationMs }} ms</td>
+        </ng-container>
+
+        <tr mat-header-row *matHeaderRowDef="columns"></tr>
+        <tr mat-row *matRowDef="let r; columns: columns"></tr>
+      </table>
+    </div>
+
+    <!-- mobile cards -->
+    <div class="cards-grid">
+      @for (r of logs(); track r.id) {
+        <mat-card class="log-card">
+          <mat-card-content>
+            <div class="card-row">
+              <span class="method-chip method-{{ r.method.toLowerCase() }}">{{ r.method }}</span>
+              <span class="status-badge {{ statusClass(r.status) }}">{{ r.status }}</span>
+              <span class="card-time">{{ r.createdAt | date:'HH:mm:ss' }}</span>
+            </div>
+            <div class="card-path">{{ r.path }}</div>
+            <div class="card-meta">
+              User: {{ r.userId ?? '-' }} &bull; Role: {{ r.role ?? 'guest' }} &bull; {{ r.durationMs }} ms
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

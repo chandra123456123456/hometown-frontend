@@ -23,6 +23,7 @@ export class AuthService {
   user = this._user.asReadonly();
   isLoggedIn = computed(() => this._user() !== null);
   isAdmin = computed(() => this._user()?.role === 'ADMIN');
+  isDeveloper = computed(() => this._user()?.role === 'DEVELOPER');
 
   register(name: string, email: string, password: string): Observable<AuthResponse> {
     return this.http.post<AuthResponse>(`${this.base}/register`, { name, email, password })

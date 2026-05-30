@@ -27,6 +27,9 @@
     @if (auth.isAdmin()) {
       <a mat-button routerLink="/admin" routerLinkActive="active">Admin</a>
     }
+    @if (auth.isDeveloper()) {
+      <a mat-button routerLink="/developer" routerLinkActive="active">Developer</a>
+    }
     @if (auth.isLoggedIn()) {
       <button mat-button [matMenuTriggerFor]="menu">
         <mat-icon>account_circle</mat-icon>
@@ -37,6 +40,9 @@
         @if (auth.isAdmin()) {
           <a mat-menu-item routerLink="/admin/metrics">Seller Metrics</a>
           <a mat-menu-item routerLink="/admin/orders">Manage Orders</a>
+        }
+        @if (auth.isDeveloper()) {
+          <a mat-menu-item routerLink="/developer">API Audit Log</a>
         }
         <button mat-menu-item (click)="logout()">Logout</button>
       </mat-menu>
@@ -61,6 +67,9 @@
           <a mat-list-item routerLink="/admin">Admin Dashboard</a>
           <a mat-list-item routerLink="/admin/metrics">Seller Metrics</a>
           <a mat-list-item routerLink="/admin/orders">Manage Orders</a>
+        }
+        @if (auth.isDeveloper()) {
+          <a mat-list-item routerLink="/developer">API Audit Log</a>
         }
         <a mat-list-item (click)="logout()">Logout</a>
       } @else {

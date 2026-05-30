@@ -13,3 +13,9 @@ export const adminGuard: CanActivateFn = () => {
   const router = inject(Router);
   return auth.isAdmin() ? true : router.createUrlTree(['/']);
 };
+
+export const developerGuard: CanActivateFn = () => {
+  const auth = inject(AuthService);
+  const router = inject(Router);
+  return auth.isDeveloper() ? true : router.createUrlTree(['/']);
+};

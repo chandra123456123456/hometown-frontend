@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { authGuard, adminGuard } from './core/guards';
+import { authGuard, adminGuard, developerGuard } from './core/guards';
 
 export const routes: Routes = [
   { path: '', loadComponent: () => import('./pages/catalog/catalog.component').then(m => m.CatalogComponent) },
@@ -14,5 +14,6 @@ export const routes: Routes = [
   { path: 'admin/orders', loadComponent: () => import('./pages/admin-orders/admin-orders.component').then(m => m.AdminOrdersComponent), canActivate: [adminGuard] },
   { path: 'antiques', loadComponent: () => import('./pages/antiques/antiques.component').then(m => m.AntiquesComponent) },
   { path: 'about', loadComponent: () => import('./pages/ceo/ceo.component').then(m => m.CeoComponent) },
+  { path: 'developer', loadComponent: () => import('./pages/developer/developer.component').then(m => m.DeveloperComponent), canActivate: [developerGuard] },
   { path: '**', redirectTo: '' },
 ];
