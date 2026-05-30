@@ -11,9 +11,9 @@ import { MatIconModule } from '@angular/material/icon';
   styleUrl: './ceo.component.scss',
 })
 export class CeoComponent {
-  ceoName = 'Ananya Verma';
+  ceoName = 'Loveleen Mehra';
   ceoTitle = 'Founder & Chief Executive Officer';
-  ceoEmail = 'ananya.verma@hometowncrafts.in';
+  ceoEmail = 'loveleen.mehra@hometowncrafts.in';
   fallback = 'https://picsum.photos/seed/hometownceo/520/520';
 
   onImgError(e: Event): void {
