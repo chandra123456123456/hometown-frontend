@@ -12,6 +12,8 @@
 
   @if (!isHandset()) {
     <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Shop</a>
+    <a mat-button routerLink="/antiques" routerLinkActive="active">Antiques</a>
+    <a mat-button routerLink="/about" routerLinkActive="active">About</a>
     @if (!auth.isAdmin()) {
       <a mat-button routerLink="/cart" routerLinkActive="active">
         <mat-icon [matBadge]="cart.count()" matBadgeColor="accent" [matBadgeHidden]="cart.count() === 0">shopping_cart</mat-icon>
@@ -44,6 +46,8 @@
   <mat-sidenav [opened]="isHandset() && drawerOpen()" mode="over" (closed)="closeDrawer()">
     <mat-nav-list (click)="closeDrawer()">
       <a mat-list-item routerLink="/">Shop</a>
+      <a mat-list-item routerLink="/antiques">Antiques</a>
+      <a mat-list-item routerLink="/about">About</a>
       @if (!auth.isAdmin()) {
         <a mat-list-item routerLink="/cart">Cart ({{ cart.count() }})</a>
       }

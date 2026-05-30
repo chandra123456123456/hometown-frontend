@@ -35,4 +35,14 @@ export class OrderService {
   updateStatus(orderId: number, status: string): Observable<Order> {
     return this.http.put<Order>(`${this.base}/admin/status`, { orderId, status });
   }
+
+  validateStock(items: { productId: number; quantity: number }[]): Observable<{
+    ok: boolean;
+    issues: { productId: number; requested: number; available: number }[];
+  }> {
+    return this.http.post<{
+      ok: boolean;
+      issues: { productId: number; requested: number; available: number }[];
+    }>(`${this.base}/validate-stock`, { items });
+  }
 }

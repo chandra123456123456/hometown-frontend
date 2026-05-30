@@ -12,5 +12,7 @@ export const routes: Routes = [
   { path: 'admin', loadComponent: () => import('./pages/admin/admin.component').then(m => m.AdminComponent), canActivate: [adminGuard] },
   { path: 'admin/metrics', loadComponent: () => import('./pages/metrics/metrics.component').then(m => m.MetricsComponent), canActivate: [adminGuard] },
   { path: 'admin/orders', loadComponent: () => import('./pages/admin-orders/admin-orders.component').then(m => m.AdminOrdersComponent), canActivate: [adminGuard] },
+  { path: 'antiques', loadComponent: () => import('./pages/antiques/antiques.component').then(m => m.AntiquesComponent) },
+  { path: 'about', loadComponent: () => import('./pages/ceo/ceo.component').then(m => m.CeoComponent) },
   { path: '**', redirectTo: '' },
 ];

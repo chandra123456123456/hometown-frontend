@@ -55,6 +55,13 @@ export class CartService {
     }
   }
 
+  async setQuantity(productId: number, quantity: number): Promise<void> {
+    await this.remove(productId);
+    if (quantity > 0) {
+      await this.add(productId, quantity);
+    }
+  }
+
   async clear(): Promise<void> {
     this._items.set([]);
     if (this.auth.isLoggedIn()) {

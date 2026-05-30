@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { HttpClient } from '@angular/common/http';
-import { forkJoin } from 'rxjs';
+import { forkJoin, firstValueFrom } from 'rxjs';
 
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
@@ -14,6 +14,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
 import { CartService } from '../../core/cart.service';
 import { ProductService } from '../../core/product.service';
@@ -23,6 +24,7 @@ import { AnalyticsService } from '../../core/analytics.service';
 import { Product, ShippingOption } from '../../core/models';
 import { environment } from '../../../environments/environment';
 import { encodeId } from '../../core/id-codec';
+import { StockDialogComponent, StockIssue } from './stock-dialog.component';
 
 interface CheckoutLine {
   productId: number;
@@ -46,6 +48,7 @@ interface CheckoutLine {
     MatInputModule,
     MatRadioModule,
     MatDividerModule,
+    MatDialogModule,
   ],
   templateUrl: './checkout.component.html',
   styleUrl: './checkout.component.scss',
@@ -59,6 +62,7 @@ export class CheckoutComponent implements OnInit {
   private http = inject(HttpClient);
   private router = inject(Router);
   private snackBar = inject(MatSnackBar);
+  private dialog = inject(MatDialog);
 
   lines = signal<CheckoutLine[]>([]);
   subtotal = signal(0);
@@ -153,8 +157,53 @@ export class CheckoutComponent implements OnInit {
   async placeOrder(): Promise<void> {
     if (!this.canPlace) return;
     this.placing.set(true);
-    const option = this.selectedOption()!;
 
+    try {
+      const cartItems = this.cartSvc.items().map(i => ({ productId: i.productId, quantity: i.quantity }));
+      const res = await firstValueFrom(this.orderSvc.validateStock(cartItems));
+
+      if (res.ok) {
+        await this.doPlaceOrder();
+        return;
+      }
+
+      // enrich issues with product names from loaded lines
+      const issues: StockIssue[] = res.issues.map(issue => ({
+        ...issue,
+        name: this.lines().find(l => l.productId === issue.productId)?.product.name,
+      }));
+
+      this.placing.set(false);
+      const result = await firstValueFrom(
+        this.dialog.open(StockDialogComponent, { data: issues, width: '420px' }).afterClosed()
+      );
+
+      if (result !== 'adjust') return;
+
+      this.placing.set(true);
+      for (const issue of issues) {
+        await this.cartSvc.setQuantity(issue.productId, issue.available);
+      }
+      this.buildLines();
+
+      // re-validate once more for safety
+      const cartItems2 = this.cartSvc.items().map(i => ({ productId: i.productId, quantity: i.quantity }));
+      const res2 = await firstValueFrom(this.orderSvc.validateStock(cartItems2));
+      if (!res2.ok) {
+        this.placing.set(false);
+        this.snackBar.open('Stock changed again. Please review your cart.', 'Close', { duration: 4000 });
+        return;
+      }
+
+      await this.doPlaceOrder();
+    } catch {
+      this.placing.set(false);
+      this.snackBar.open('Failed to place order. Please try again.', 'Close', { duration: 4000 });
+    }
+  }
+
+  private async doPlaceOrder(): Promise<void> {
+    const option = this.selectedOption()!;
     this.orderSvc.create({
       items: this.cartSvc.items().map(i => ({ productId: i.productId, quantity: i.quantity })),
       shippingAddress: this.shippingAddress.trim(),

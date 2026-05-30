@@ -18,6 +18,7 @@ export interface Product {
   imageUrls: string[];
   avgRating?: number;
   reviewCount?: number;
+  antique?: boolean;
 }
 
 export interface Review {

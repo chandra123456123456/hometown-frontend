@@ -1,4 +1,19 @@
 <div class="catalog-page">
+  @if (suggestions().length) {
+    <div class="suggestions-section">
+      <h3 class="suggestions-heading">Suggested for you</h3>
+      <div class="suggestions-row">
+        @for (p of suggestions(); track p.id) {
+          <a class="suggestion-card" [routerLink]="['/product', encodeId(p.id)]">
+            <img [src]="imageUrl(p)" [alt]="p.name" appProtectImage draggable="false" />
+            <span class="suggestion-name">{{ p.name }}</span>
+            <span class="suggestion-price">₹{{ p.effectivePrice }}</span>
+          </a>
+        }
+      </div>
+    </div>
+  }
+
   <div class="filters">
     <mat-form-field appearance="outline" class="search-field">
       <mat-label>Search products</mat-label>
@@ -67,6 +82,9 @@
                appProtectImage draggable="false" />
           <mat-card-content>
             <h3 class="product-name">{{ product.name }}</h3>
+            @if (product.antique) {
+              <span class="antique-badge">Antique • 1 of a kind</span>
+            }
             <div class="price-block">
               @if (product.discountPercent > 0) {
                 <span class="strike">₹{{ product.price }}</span>

@@ -18,6 +18,7 @@ import { ProductService } from '../../core/product.service';
 import { CartService } from '../../core/cart.service';
 import { AnalyticsService } from '../../core/analytics.service';
 import { AuthService } from '../../core/auth.service';
+import { SearchHistoryService } from '../../core/search-history.service';
 import { Category, Product } from '../../core/models';
 import { encodeId } from '../../core/id-codec';
 import { ProtectImageDirective } from '../../core/protect-image.directive';
@@ -41,12 +42,14 @@ export class CatalogComponent implements OnInit {
   private productSvc = inject(ProductService);
   private cartSvc = inject(CartService);
   private analytics = inject(AnalyticsService);
+  private history = inject(SearchHistoryService);
   auth = inject(AuthService);
 
   categories = signal<Category[]>([]);
   products = signal<Product[]>([]);
   totalElements = signal(0);
   loading = signal(false);
+  suggestions = signal<Product[]>([]);
 
   searchQuery = '';
   selectedCategoryId: number | null = null;
@@ -64,6 +67,13 @@ export class CatalogComponent implements OnInit {
     this.analytics.track('CATALOG_VIEW');
     this.productSvc.categories().subscribe(cats => this.categories.set(cats));
     this.loadProducts();
+    const recent = this.history.recent();
+    if (recent.length && !this.searchQuery) {
+      this.productSvc.list({ q: recent[0], size: 6 }).subscribe({
+        next: page => this.suggestions.set(page.content),
+        error: () => {},
+      });
+    }
   }
 
   loadProducts(): void {
@@ -88,6 +98,10 @@ export class CatalogComponent implements OnInit {
   }
 
   onSearch(): void {
+    if (this.searchQuery.trim()) {
+      this.history.record(this.searchQuery);
+      this.suggestions.set([]);
+    }
     this.pageIndex = 0;
     this.loadProducts();
   }

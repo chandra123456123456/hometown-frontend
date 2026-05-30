@@ -1,0 +1,82 @@
+<div class="ceo-page">
+  <h1 class="ceo-title">From the CEO's Desk</h1>
+
+  <mat-card class="ceo-card">
+    <div class="ceo-layout">
+      <div class="ceo-photo">
+        <img src="assets/ceo.jpg" alt="{{ ceoName }}, {{ ceoTitle }}" (error)="onImgError($event)" />
+        <div class="ceo-name">{{ ceoName }}</div>
+        <div class="ceo-role">{{ ceoTitle }}</div>
+        <a class="ceo-mail" [href]="'mailto:' + ceoEmail">
+          <mat-icon>mail</mat-icon> {{ ceoEmail }}
+        </a>
+      </div>
+
+      <div class="ceo-letter">
+        <p>Dear Patrons, Partners and Artisans,</p>
+
+        <p>
+          At <strong>HomeTown</strong>, we believe that every handcrafted piece carries the soul of the
+          hands that made it. What began as a simple conviction — that the extraordinary artistry of our
+          villages deserves a place in homes across the world — has grown into a movement to bring
+          authentic, handmade craft and folk art to a global audience.
+        </p>
+
+        <p>
+          Our mission is twofold. First, to preserve and celebrate India's living heritage of handmade art —
+          the Madhubani and Warli paintings, the hand-thrown terracotta, the handloom weaves and the
+          cast-brass craft that have been passed down through generations. Second, and just as important, to
+          <strong>empower the rural artisan</strong>. By connecting craftspeople directly to discerning
+          customers, we are building fair, dignified and sustainable livelihoods in the very communities
+          where this art is born — ensuring that the maker, not the middleman, is the one who prospers.
+        </p>
+
+        <p>
+          Every purchase on HomeTown is more than a transaction; it is an investment in a rural family, in the
+          continuity of a craft tradition, and in a more equitable creative economy for our country. Behind
+          each product is a story, an artisan, and a community we are proud to stand beside.
+        </p>
+
+        <p>
+          As we grow, our commitment remains unchanged: uncompromising quality, honest provenance, and an
+          unwavering respect for the people who make our work possible. Thank you for being part of the
+          HomeTown family and for helping us take the craft of our heartland to the world.
+        </p>
+
+        <p class="ceo-signoff">
+          Warm regards,<br />
+          <strong>{{ ceoName }}</strong><br />
+          {{ ceoTitle }}, HomeTown Crafts
+        </p>
+      </div>
+    </div>
+  </mat-card>
+
+  <mat-card class="ceo-sample-mail">
+    <h2><mat-icon>drafts</mat-icon> Sample corporate message</h2>
+    <div class="mail-head">
+      <div><span class="lbl">From:</span> {{ ceoName }} &lt;{{ ceoEmail }}&gt;</div>
+      <div><span class="lbl">To:</span> partners&#64;hometowncrafts.in</div>
+      <div><span class="lbl">Subject:</span> Partnering to empower rural handmade art</div>
+    </div>
+    <div class="mail-body">
+      <p>Dear Partner,</p>
+      <p>
+        Thank you for your interest in HomeTown Crafts. We are a purpose-led commerce platform dedicated to
+        bringing authentic, handmade craft and folk paintings from rural India to homes worldwide, while
+        ensuring fair and sustainable earnings for the artisans who create them.
+      </p>
+      <p>
+        We would welcome the opportunity to explore how we can work together — whether through artisan
+        onboarding, bulk and corporate gifting, or initiatives that champion handmade art and rural
+        livelihoods. Please feel free to reach me directly at the address below.
+      </p>
+      <p>
+        Warm regards,<br />
+        <strong>{{ ceoName }}</strong><br />
+        {{ ceoTitle }} · HomeTown Crafts<br />
+        {{ ceoEmail }}
+      </p>
+    </div>
+  </mat-card>
+</div>

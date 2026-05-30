@@ -20,6 +20,10 @@
       <div class="info-col">
         <h1 class="product-name">{{ p.name }}</h1>
 
+        @if (p.antique) {
+          <span class="antique-badge">Antique • 1 of a kind</span>
+        }
+
         <div class="price-block">
           @if (p.discountPercent > 0) {
             <span class="strike">₹{{ p.price }}</span>

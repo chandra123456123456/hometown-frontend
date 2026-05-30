@@ -1,0 +1,50 @@
+<div class="antiques-page">
+  <div class="gallery-header">
+    <mat-icon class="gallery-icon">auto_awesome</mat-icon>
+    <h1>Antique Gallery — One-of-a-kind pieces</h1>
+  </div>
+
+  @if (loading()) {
+    <div class="spinner-wrap">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (products().length === 0) {
+    <div class="empty-state">
+      <mat-icon>hourglass_empty</mat-icon>
+      <p>No antique pieces yet.</p>
+    </div>
+  } @else {
+    <div class="product-grid">
+      @for (product of products(); track product.id) {
+        <mat-card class="product-card" [routerLink]="['/product', encodeId(product.id)]">
+          <img mat-card-image [src]="imageUrl(product)" [alt]="product.name"
+               appProtectImage draggable="false" />
+          <mat-card-content>
+            <h3 class="product-name">{{ product.name }}</h3>
+            <span class="antique-badge">Antique • 1 of a kind</span>
+            <div class="price-block">
+              @if (product.discountPercent > 0) {
+                <span class="strike">₹{{ product.price }}</span>
+                <span class="price">₹{{ product.effectivePrice }}</span>
+                <span class="discount-badge">{{ product.discountPercent }}% off</span>
+              } @else {
+                <span class="price">₹{{ product.price }}</span>
+              }
+            </div>
+            <app-star-rating [rating]="product.avgRating || 0" [count]="product.reviewCount || 0" />
+          </mat-card-content>
+          <mat-card-actions>
+            @if (!auth.isAdmin()) {
+              <button mat-raised-button color="primary"
+                      (click)="addToCart(product, $event)"
+                      [disabled]="product.stock === 0">
+                <mat-icon>add_shopping_cart</mat-icon>
+                {{ product.stock === 0 ? 'Out of stock' : 'Add to cart' }}
+              </button>
+            }
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

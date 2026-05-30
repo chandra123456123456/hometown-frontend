@@ -11,6 +11,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatSelectModule } from '@angular/material/select';
+import { MatChipsModule } from '@angular/material/chips';
 
 import { ProductService } from '../../core/product.service';
 import { CartService } from '../../core/cart.service';
@@ -29,7 +30,7 @@ import { StarRatingComponent } from '../../core/star-rating.component';
     CommonModule, FormsModule, RouterLink, DatePipe,
     MatCardModule, MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatProgressSpinnerModule,
-    MatSnackBarModule, MatSelectModule,
+    MatSnackBarModule, MatSelectModule, MatChipsModule,
     ProtectImageDirective, StarRatingComponent,
   ],
   templateUrl: './product-detail.component.html',

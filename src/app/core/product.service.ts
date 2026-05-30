@@ -18,6 +18,7 @@ export class ProductService {
     maxPrice?: number;
     inStock?: boolean;
     sort?: string;
+    antique?: boolean;
   } = {}): Observable<Page<Product>> {
     let params = new HttpParams();
     if (opts.categoryId != null) params = params.set('categoryId', opts.categoryId);
@@ -26,6 +27,7 @@ export class ProductService {
     if (opts.maxPrice != null) params = params.set('maxPrice', opts.maxPrice);
     if (opts.inStock) params = params.set('inStock', 'true');
     if (opts.sort) params = params.set('sort', opts.sort);
+    if (opts.antique) params = params.set('antique', 'true');
     params = params.set('page', opts.page ?? 0).set('size', opts.size ?? 12);
     return this.http.get<Page<Product>>(`${this.base}/products`, { params });
   }

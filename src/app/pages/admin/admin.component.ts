@@ -27,6 +27,7 @@ interface ProductForm {
   categoryId: number | null;
   stock: number | null;
   active: boolean;
+  antique: boolean;
   imageUrlsRaw: string;
 }
 
@@ -39,6 +40,7 @@ function emptyForm(): ProductForm {
     categoryId: null,
     stock: 0,
     active: true,
+    antique: false,
     imageUrlsRaw: '',
   };
 }
@@ -116,6 +118,7 @@ export class AdminComponent implements OnInit {
       categoryId: product.categoryId,
       stock: product.stock,
       active: product.active,
+      antique: product.antique ?? false,
       imageUrlsRaw: product.imageUrls?.join(', ') ?? '',
     };
     this.formPanelOpen = true;
@@ -172,6 +175,7 @@ export class AdminComponent implements OnInit {
       categoryId: this.form.categoryId!,
       stock: this.form.stock ?? 0,
       active: this.form.active,
+      antique: this.form.antique,
       imageUrls,
     };
 
