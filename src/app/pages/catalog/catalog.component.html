@@ -17,6 +17,37 @@
         }
       </mat-select>
     </mat-form-field>
+
+    <mat-form-field appearance="outline" class="sort-field">
+      <mat-label>Sort</mat-label>
+      <mat-select [(ngModel)]="sort" (ngModelChange)="applyFilters()">
+        <mat-option value="newest">Newest</mat-option>
+        <mat-option value="price_asc">Price: Low to High</mat-option>
+        <mat-option value="price_desc">Price: High to Low</mat-option>
+        <mat-option value="name">Name</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  <div class="filter-bar">
+    <mat-form-field appearance="outline" class="price-field">
+      <mat-label>Min ₹</mat-label>
+      <input matInput type="number" [(ngModel)]="minPrice" (keyup.enter)="applyFilters()" min="0" placeholder="0" />
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="price-field">
+      <mat-label>Max ₹</mat-label>
+      <input matInput type="number" [(ngModel)]="maxPrice" (keyup.enter)="applyFilters()" min="0" placeholder="Any" />
+    </mat-form-field>
+
+    <mat-slide-toggle [(ngModel)]="inStockOnly" class="stock-toggle">In stock only</mat-slide-toggle>
+
+    <button mat-raised-button color="primary" (click)="applyFilters()">
+      <mat-icon>filter_list</mat-icon> Apply
+    </button>
+    <button mat-stroked-button (click)="clearFilters()">
+      <mat-icon>clear</mat-icon> Clear
+    </button>
   </div>
 
   @if (loading()) {

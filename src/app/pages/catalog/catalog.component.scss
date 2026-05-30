@@ -22,6 +22,29 @@
   min-width: 160px;
 }
 
+.sort-field {
+  flex: 0 1 200px;
+  min-width: 160px;
+}
+
+.filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-bottom: 24px;
+  align-items: center;
+}
+
+.price-field {
+  flex: 0 1 130px;
+  min-width: 100px;
+}
+
+.stock-toggle {
+  flex: 0 0 auto;
+  align-self: center;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));

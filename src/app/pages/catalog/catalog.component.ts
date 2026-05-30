@@ -12,6 +12,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatPaginatorModule, PageEvent } from '@angular/material/paginator';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { ProductService } from '../../core/product.service';
 import { CartService } from '../../core/cart.service';
@@ -29,6 +30,7 @@ import { StarRatingComponent } from '../../core/star-rating.component';
     MatCardModule, MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatChipsModule, MatPaginatorModule, MatProgressSpinnerModule,
+    MatSlideToggleModule,
     ProtectImageDirective, StarRatingComponent,
   ],
   templateUrl: './catalog.component.html',
@@ -49,6 +51,11 @@ export class CatalogComponent implements OnInit {
   pageIndex = 0;
   pageSize = 12;
 
+  minPrice: number | null = null;
+  maxPrice: number | null = null;
+  inStockOnly = false;
+  sort = 'newest';
+
   readonly encodeId = encodeId;
 
   ngOnInit(): void {
@@ -64,6 +71,10 @@ export class CatalogComponent implements OnInit {
       q: this.searchQuery || undefined,
       page: this.pageIndex,
       size: this.pageSize,
+      minPrice: this.minPrice ?? undefined,
+      maxPrice: this.maxPrice ?? undefined,
+      inStock: this.inStockOnly || undefined,
+      sort: this.sort || undefined,
     }).subscribe({
       next: page => {
         this.products.set(page.content);
@@ -80,6 +91,20 @@ export class CatalogComponent implements OnInit {
   }
 
   onCategoryChange(): void {
+    this.pageIndex = 0;
+    this.loadProducts();
+  }
+
+  applyFilters(): void {
+    this.pageIndex = 0;
+    this.loadProducts();
+  }
+
+  clearFilters(): void {
+    this.minPrice = null;
+    this.maxPrice = null;
+    this.inStockOnly = false;
+    this.sort = 'newest';
     this.pageIndex = 0;
     this.loadProducts();
   }
