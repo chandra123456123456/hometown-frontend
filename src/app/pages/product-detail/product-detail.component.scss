@@ -1,0 +1,212 @@
+.detail-page {
+  padding: 32px 16px;
+  max-width: 1100px;
+  margin: 0 auto;
+}
+
+.detail-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 40px;
+  align-items: start;
+}
+
+.image-col {
+  position: sticky;
+  top: 80px;
+}
+
+.product-image {
+  width: 100%;
+  border-radius: 8px;
+  object-fit: cover;
+  max-height: 480px;
+}
+
+.product-name {
+  font-size: 1.6rem;
+  font-weight: 700;
+  margin: 0 0 16px;
+  line-height: 1.3;
+}
+
+.price-block {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin-bottom: 16px;
+}
+
+.price {
+  font-size: 1.6rem;
+  font-weight: 700;
+  color: #1a237e;
+}
+
+.strike {
+  font-size: 1.1rem;
+  color: #9e9e9e;
+  text-decoration: line-through;
+}
+
+.discount-badge {
+  font-size: 0.8rem;
+  background: #e8f5e9;
+  color: #2e7d32;
+  padding: 3px 8px;
+  border-radius: 4px;
+  font-weight: 600;
+}
+
+.stock-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin-bottom: 16px;
+
+  mat-icon {
+    font-size: 20px;
+    height: 20px;
+    width: 20px;
+  }
+
+  &.in-stock {
+    color: #2e7d32;
+  }
+
+  &.out-of-stock {
+    color: #c62828;
+  }
+}
+
+.description {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: #424242;
+  margin-bottom: 24px;
+}
+
+.add-to-cart-row {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+}
+
+.qty-field {
+  width: 90px;
+}
+
+.delivery-check {
+  border-top: 1px solid #e0e0e0;
+  padding-top: 24px;
+
+  h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    margin: 0 0 12px;
+  }
+}
+
+.delivery-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.pin-field {
+  width: 160px;
+}
+
+.delivery-ok {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #2e7d32;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 0;
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+.delivery-no {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  color: #c62828;
+  font-size: 0.9rem;
+  font-weight: 500;
+  margin: 0;
+
+  mat-icon {
+    font-size: 18px;
+    height: 18px;
+    width: 18px;
+  }
+}
+
+.spinner-wrap {
+  display: flex;
+  justify-content: center;
+  padding: 80px 0;
+}
+
+.not-found {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 80px 0;
+  color: #9e9e9e;
+  text-align: center;
+
+  mat-icon {
+    font-size: 56px;
+    height: 56px;
+    width: 56px;
+    margin-bottom: 16px;
+  }
+
+  h2 {
+    font-size: 1.4rem;
+    margin: 0 0 8px;
+    color: #424242;
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.95rem;
+  }
+}
+
+@media (max-width: 767px) {
+  .detail-page {
+    padding: 16px 8px;
+  }
+
+  .detail-layout {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+
+  .image-col {
+    position: static;
+  }
+
+  .product-image {
+    max-height: 300px;
+  }
+
+  .product-name {
+    font-size: 1.25rem;
+  }
+}

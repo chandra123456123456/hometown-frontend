@@ -1,0 +1,73 @@
+<div class="cart-page">
+  <h1 class="page-title">Shopping Cart</h1>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-icon class="spin-icon">sync</mat-icon>
+      <p>Loading cart…</p>
+    </div>
+  } @else if (lines().length === 0) {
+    <div class="empty-state">
+      <mat-icon>remove_shopping_cart</mat-icon>
+      <p>Your cart is empty.</p>
+      <a mat-raised-button color="primary" routerLink="/">Browse products</a>
+    </div>
+  } @else {
+    <div class="cart-layout">
+      <mat-card class="cart-items-card">
+        @for (line of lines(); track line.productId) {
+          <div class="cart-line">
+            <a [routerLink]="['/product', encodeId(line.productId)]" class="product-thumb-link">
+              <img class="product-thumb" [src]="imageUrl(line.product)" [alt]="line.product.name" />
+            </a>
+
+            <div class="line-info">
+              <a [routerLink]="['/product', encodeId(line.productId)]" class="product-name">
+                {{ line.product.name }}
+              </a>
+              <span class="unit-price">₹{{ line.product.effectivePrice }}</span>
+            </div>
+
+            <div class="qty-stepper">
+              <button mat-icon-button (click)="decrease(line.productId)" aria-label="Decrease quantity">
+                <mat-icon>remove</mat-icon>
+              </button>
+              <span class="qty-value">{{ line.quantity }}</span>
+              <button mat-icon-button (click)="increase(line.productId)" aria-label="Increase quantity">
+                <mat-icon>add</mat-icon>
+              </button>
+            </div>
+
+            <span class="line-total">₹{{ line.lineTotal }}</span>
+
+            <button mat-icon-button color="warn" (click)="remove(line.productId)" aria-label="Remove item">
+              <mat-icon>delete_outline</mat-icon>
+            </button>
+          </div>
+
+          <mat-divider />
+        }
+      </mat-card>
+
+      <mat-card class="cart-summary-card">
+        <mat-card-content>
+          <h2 class="summary-title">Order Summary</h2>
+          <div class="summary-row">
+            <span>Subtotal ({{ cartSvc.count() }} items)</span>
+            <span class="summary-amount">₹{{ subtotal() }}</span>
+          </div>
+          <mat-divider class="summary-divider" />
+          <div class="summary-row grand">
+            <span>Total</span>
+            <span class="summary-amount">₹{{ subtotal() }}</span>
+          </div>
+        </mat-card-content>
+        <mat-card-actions>
+          <a mat-raised-button color="primary" class="checkout-btn" routerLink="/checkout">
+            Proceed to checkout
+          </a>
+        </mat-card-actions>
+      </mat-card>
+    </div>
+  }
+</div>

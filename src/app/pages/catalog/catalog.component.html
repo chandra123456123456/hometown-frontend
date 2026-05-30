@@ -1,0 +1,70 @@
+<div class="catalog-page">
+  <div class="filters">
+    <mat-form-field appearance="outline" class="search-field">
+      <mat-label>Search products</mat-label>
+      <input matInput [(ngModel)]="searchQuery" (keyup.enter)="onSearch()" placeholder="e.g. chair, lamp…" />
+      <button matSuffix mat-icon-button (click)="onSearch()" aria-label="Search">
+        <mat-icon>search</mat-icon>
+      </button>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="category-field">
+      <mat-label>Category</mat-label>
+      <mat-select [(ngModel)]="selectedCategoryId" (ngModelChange)="onCategoryChange()">
+        <mat-option [value]="null">All</mat-option>
+        @for (cat of categories(); track cat.id) {
+          <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+        }
+      </mat-select>
+    </mat-form-field>
+  </div>
+
+  @if (loading()) {
+    <div class="spinner-wrap">
+      <mat-spinner diameter="48" />
+    </div>
+  } @else if (products().length === 0) {
+    <div class="empty-state">
+      <mat-icon>search_off</mat-icon>
+      <p>No products found. Try a different search or category.</p>
+    </div>
+  } @else {
+    <div class="product-grid">
+      @for (product of products(); track product.id) {
+        <mat-card class="product-card" [routerLink]="['/product', encodeId(product.id)]">
+          <img mat-card-image [src]="imageUrl(product)" [alt]="product.name" />
+          <mat-card-content>
+            <h3 class="product-name">{{ product.name }}</h3>
+            <div class="price-block">
+              @if (product.discountPercent > 0) {
+                <span class="strike">₹{{ product.price }}</span>
+                <span class="price">₹{{ product.effectivePrice }}</span>
+                <span class="discount-badge">{{ product.discountPercent }}% off</span>
+              } @else {
+                <span class="price">₹{{ product.price }}</span>
+              }
+            </div>
+          </mat-card-content>
+          <mat-card-actions>
+            <button mat-raised-button color="primary"
+                    (click)="addToCart(product.id); $event.stopPropagation()"
+                    [disabled]="product.stock === 0">
+              <mat-icon>add_shopping_cart</mat-icon>
+              {{ product.stock === 0 ? 'Out of stock' : 'Add to cart' }}
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+
+    <mat-paginator
+      [length]="totalElements()"
+      [pageSize]="pageSize"
+      [pageIndex]="pageIndex"
+      [pageSizeOptions]="[12, 24, 48]"
+      (page)="onPage($event)"
+      showFirstLastButtons
+      aria-label="Select page">
+    </mat-paginator>
+  }
+</div>

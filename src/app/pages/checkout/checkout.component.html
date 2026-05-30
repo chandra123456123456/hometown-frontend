@@ -1,0 +1,162 @@
+<div class="checkout-page">
+  <h1 class="page-title">Checkout</h1>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-icon class="spin-icon">sync</mat-icon>
+      <p>Loading your cart…</p>
+    </div>
+  } @else if (lines().length === 0) {
+    <div class="empty-state">
+      <mat-icon>remove_shopping_cart</mat-icon>
+      <p>Your cart is empty.</p>
+      <a mat-raised-button color="primary" routerLink="/">Browse products</a>
+    </div>
+  } @else {
+    <div class="checkout-layout">
+
+      <!-- Left column: form -->
+      <div class="checkout-form-col">
+
+        <!-- Shipping details -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <h2 class="section-title">Shipping Details</h2>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Shipping Address</mat-label>
+              <textarea
+                matInput
+                [(ngModel)]="shippingAddress"
+                name="shippingAddress"
+                rows="3"
+                placeholder="House no, street, area, city, state"
+                required>
+              </textarea>
+              @if (!shippingAddress.trim()) {
+                <mat-error>Shipping address is required.</mat-error>
+              }
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="full-width">
+              <mat-label>Pincode</mat-label>
+              <input
+                matInput
+                [(ngModel)]="destPincode"
+                name="destPincode"
+                (ngModelChange)="onPincodeChange()"
+                maxlength="6"
+                placeholder="6-digit pincode"
+                required />
+              @if (pincodeInvalid()) {
+                <mat-error>Enter a valid 6-digit pincode.</mat-error>
+              }
+            </mat-form-field>
+          </mat-card-content>
+        </mat-card>
+
+        <!-- Shipping options -->
+        <mat-card class="form-card">
+          <mat-card-content>
+            <h2 class="section-title">Shipping Method</h2>
+
+            @if (loadingShipping()) {
+              <div class="inline-loading">
+                <mat-icon class="spin-icon">sync</mat-icon>
+                <span>Fetching shipping options…</span>
+              </div>
+            } @else if (shippingError()) {
+              <p class="shipping-error">
+                <mat-icon>error_outline</mat-icon>
+                {{ shippingError() }}
+              </p>
+            } @else if (shippingOptions().length > 0) {
+              <mat-radio-group
+                class="shipping-radio-group"
+                [ngModel]="selectedOption()"
+                (ngModelChange)="selectedOption.set($event)"
+                name="shippingOption">
+                @for (opt of shippingOptions(); track opt.partner) {
+                  <mat-radio-button class="shipping-option" [value]="opt">
+                    <div class="shipping-option-content">
+                      <span class="partner-name">{{ opt.partner }}</span>
+                      <span class="eta">Delivery in {{ opt.etaDays }} day(s)</span>
+                      <span class="charge">₹{{ opt.charge }}</span>
+                    </div>
+                  </mat-radio-button>
+                }
+              </mat-radio-group>
+            } @else {
+              <p class="hint">Enter a 6-digit pincode above to see shipping options.</p>
+            }
+          </mat-card-content>
+        </mat-card>
+      </div>
+
+      <!-- Right column: order summary -->
+      <div class="summary-col">
+        <mat-card class="summary-card">
+          <mat-card-content>
+            <h2 class="section-title">Order Summary</h2>
+
+            <div class="order-items">
+              @for (line of lines(); track line.productId) {
+                <div class="order-line">
+                  <img class="item-thumb" [src]="imageUrl(line.product)" [alt]="line.product.name" />
+                  <div class="item-details">
+                    <span class="item-name">{{ line.product.name }}</span>
+                    <span class="item-qty">x{{ line.quantity }}</span>
+                  </div>
+                  <span class="item-total">₹{{ line.lineTotal }}</span>
+                </div>
+              }
+            </div>
+
+            <mat-divider class="summary-divider" />
+
+            <div class="summary-row">
+              <span>Items subtotal</span>
+              <span>₹{{ subtotal() }}</span>
+            </div>
+
+            <div class="summary-row">
+              <span>Shipping</span>
+              <span>
+                @if (selectedOption()) {
+                  ₹{{ selectedOption()!.charge }}
+                } @else {
+                  —
+                }
+              </span>
+            </div>
+
+            <mat-divider class="summary-divider" />
+
+            <div class="summary-row grand">
+              <span>Grand Total</span>
+              <span>₹{{ grandTotal }}</span>
+            </div>
+          </mat-card-content>
+
+          <mat-card-actions>
+            <button
+              mat-raised-button
+              color="primary"
+              class="place-order-btn"
+              [disabled]="!canPlace"
+              (click)="placeOrder()">
+              @if (placing()) {
+                <mat-icon class="spin-icon">sync</mat-icon>
+                Placing order…
+              } @else {
+                <mat-icon>check_circle_outline</mat-icon>
+                Place Order
+              }
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      </div>
+
+    </div>
+  }
+</div>

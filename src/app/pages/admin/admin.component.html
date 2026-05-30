@@ -1,0 +1,186 @@
+<div class="admin-page">
+  <h1 class="page-title">
+    <mat-icon>admin_panel_settings</mat-icon>
+    Admin — Product Management
+  </h1>
+
+  <!-- Add Category -->
+  <mat-card class="cat-card">
+    <mat-card-header>
+      <mat-card-title>Add Category</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="cat-form">
+        <mat-form-field appearance="outline" class="cat-field">
+          <mat-label>Category name</mat-label>
+          <input matInput [(ngModel)]="newCatName" placeholder="e.g. Furniture" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="cat-field">
+          <mat-label>Slug</mat-label>
+          <input matInput [(ngModel)]="newCatSlug" placeholder="e.g. furniture" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="addCategory()" class="cat-btn">
+          <mat-icon>add</mat-icon> Add
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Product Table -->
+  <mat-card class="table-card">
+    <mat-card-header>
+      <mat-card-title>Products</mat-card-title>
+      <span class="spacer"></span>
+      <button mat-raised-button color="primary" (click)="resetForm(); formPanelOpen = true">
+        <mat-icon>add</mat-icon> New Product
+      </button>
+    </mat-card-header>
+
+    <mat-card-content>
+      @if (loading()) {
+        <p class="loading-msg">Loading products…</p>
+      } @else if (products().length === 0) {
+        <p class="empty-msg">No products found. Add one below.</p>
+      } @else {
+        <div class="table-wrap">
+          <table mat-table [dataSource]="products()" class="product-table">
+
+            <ng-container matColumnDef="name">
+              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <td mat-cell *matCellDef="let p">
+                <span class="product-name-cell">{{ p.name }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="category">
+              <th mat-header-cell *matHeaderCellDef>Category</th>
+              <td mat-cell *matCellDef="let p">{{ categoryName(p.categoryId) }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="price">
+              <th mat-header-cell *matHeaderCellDef>Price</th>
+              <td mat-cell *matCellDef="let p">₹{{ p.price | number:'1.0-0' }}</td>
+            </ng-container>
+
+            <ng-container matColumnDef="discount">
+              <th mat-header-cell *matHeaderCellDef>Disc.%</th>
+              <td mat-cell *matCellDef="let p">
+                @if (p.discountPercent > 0) {
+                  <span class="discount-badge">{{ p.discountPercent }}%</span>
+                } @else {
+                  <span class="no-discount">—</span>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="stock">
+              <th mat-header-cell *matHeaderCellDef>Stock</th>
+              <td mat-cell *matCellDef="let p">
+                <span [class.low-stock]="p.stock < 5">{{ p.stock }}</span>
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="active">
+              <th mat-header-cell *matHeaderCellDef>Active</th>
+              <td mat-cell *matCellDef="let p">
+                @if (p.active) {
+                  <mat-icon class="active-icon">check_circle</mat-icon>
+                } @else {
+                  <mat-icon class="inactive-icon">cancel</mat-icon>
+                }
+              </td>
+            </ng-container>
+
+            <ng-container matColumnDef="actions">
+              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <td mat-cell *matCellDef="let p">
+                <button mat-icon-button color="primary" (click)="startEdit(p)" aria-label="Edit">
+                  <mat-icon>edit</mat-icon>
+                </button>
+                <button mat-icon-button color="warn" (click)="deleteProduct(p.id, p.name)" aria-label="Delete">
+                  <mat-icon>delete</mat-icon>
+                </button>
+              </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+          </table>
+        </div>
+      }
+    </mat-card-content>
+  </mat-card>
+
+  <!-- Add / Edit Form -->
+  <mat-expansion-panel class="form-panel" [(expanded)]="formPanelOpen">
+    <mat-expansion-panel-header>
+      <mat-panel-title>
+        <mat-icon>{{ editingId != null ? 'edit' : 'add_box' }}</mat-icon>
+        {{ editingId != null ? 'Edit Product' : 'Add New Product' }}
+      </mat-panel-title>
+    </mat-expansion-panel-header>
+
+    <div class="product-form">
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field-wide">
+          <mat-label>Product name</mat-label>
+          <input matInput [(ngModel)]="form.name" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Category</mat-label>
+          <mat-select [(ngModel)]="form.categoryId">
+            @for (cat of categories(); track cat.id) {
+              <mat-option [value]="cat.id">{{ cat.name }}</mat-option>
+            }
+          </mat-select>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field-full">
+          <mat-label>Description</mat-label>
+          <textarea matInput [(ngModel)]="form.description" rows="3"></textarea>
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Price (₹)</mat-label>
+          <input matInput type="number" min="0" [(ngModel)]="form.price" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Discount %</mat-label>
+          <input matInput type="number" min="0" max="90" [(ngModel)]="form.discountPercent" />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Stock</mat-label>
+          <input matInput type="number" min="0" [(ngModel)]="form.stock" />
+        </mat-form-field>
+      </div>
+
+      <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field-full">
+          <mat-label>Image URLs (comma-separated)</mat-label>
+          <input matInput [(ngModel)]="form.imageUrlsRaw" placeholder="https://…, https://…" />
+        </mat-form-field>
+      </div>
+
+      <div class="form-row form-row-actions">
+        <mat-slide-toggle [(ngModel)]="form.active" color="primary">Active</mat-slide-toggle>
+
+        <div class="action-btns">
+          <button mat-stroked-button type="button" (click)="resetForm()">
+            <mat-icon>close</mat-icon> Cancel
+          </button>
+          <button mat-raised-button color="primary" type="button" (click)="submitForm()">
+            <mat-icon>save</mat-icon>
+            {{ editingId != null ? 'Update' : 'Create' }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </mat-expansion-panel>
+</div>

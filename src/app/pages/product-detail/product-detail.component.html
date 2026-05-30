@@ -1,0 +1,84 @@
+<div class="detail-page">
+  @if (loading()) {
+    <div class="spinner-wrap">
+      <mat-spinner diameter="56" />
+    </div>
+  } @else if (notFound()) {
+    <div class="not-found">
+      <mat-icon>error_outline</mat-icon>
+      <h2>Product not found</h2>
+      <p>The product you're looking for doesn't exist or the link is invalid.</p>
+    </div>
+  } @else if (product()) {
+    @if (product(); as p) {
+    <div class="detail-layout">
+      <div class="image-col">
+        <img [src]="imageUrl(p)" [alt]="p.name" class="product-image" />
+      </div>
+
+      <div class="info-col">
+        <h1 class="product-name">{{ p.name }}</h1>
+
+        <div class="price-block">
+          @if (p.discountPercent > 0) {
+            <span class="strike">₹{{ p.price }}</span>
+            <span class="price">₹{{ p.effectivePrice }}</span>
+            <span class="discount-badge">{{ p.discountPercent }}% off</span>
+          } @else {
+            <span class="price">₹{{ p.price }}</span>
+          }
+        </div>
+
+        <p class="stock-status" [class.in-stock]="p.stock > 0" [class.out-of-stock]="p.stock === 0">
+          <mat-icon>{{ p.stock > 0 ? 'check_circle' : 'cancel' }}</mat-icon>
+          {{ p.stock > 0 ? 'In stock' : 'Out of stock' }}
+        </p>
+
+        <p class="description">{{ p.description }}</p>
+
+        <div class="add-to-cart-row">
+          <mat-form-field appearance="outline" class="qty-field">
+            <mat-label>Qty</mat-label>
+            <input matInput type="number" [(ngModel)]="quantity" min="1" [max]="p.stock || 1" />
+          </mat-form-field>
+
+          <button mat-raised-button color="primary" (click)="addToCart()" [disabled]="p.stock === 0">
+            <mat-icon>add_shopping_cart</mat-icon>
+            {{ p.stock === 0 ? 'Out of stock' : 'Add to cart' }}
+          </button>
+        </div>
+
+        <div class="delivery-check">
+          <h3>Check delivery</h3>
+          <div class="delivery-row">
+            <mat-form-field appearance="outline" class="pin-field">
+              <mat-label>Enter pincode</mat-label>
+              <input matInput [(ngModel)]="pincode" maxlength="6" (keyup.enter)="checkDelivery()" placeholder="e.g. 400001" />
+            </mat-form-field>
+            <button mat-stroked-button (click)="checkDelivery()" [disabled]="shippingLoading()">
+              @if (shippingLoading()) {
+                <mat-spinner diameter="18" />
+              } @else {
+                Check
+              }
+            </button>
+          </div>
+
+          @if (shippingResult(); as opt) {
+            <p class="delivery-ok">
+              <mat-icon>local_shipping</mat-icon>
+              Delivery by ~{{ opt.etaDays }} days &nbsp;·&nbsp; ₹{{ opt.charge }} shipping
+            </p>
+          }
+          @if (shippingNotServiceable()) {
+            <p class="delivery-no">
+              <mat-icon>location_off</mat-icon>
+              Not serviceable to this pincode.
+            </p>
+          }
+        </div>
+      </div>
+    </div>
+    }
+  }
+</div>
