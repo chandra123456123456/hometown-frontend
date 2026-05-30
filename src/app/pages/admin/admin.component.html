@@ -32,6 +32,40 @@
     </mat-card-content>
   </mat-card>
 
+  <!-- Upload Shot -->
+  <mat-card class="cat-card">
+    <mat-card-header>
+      <mat-card-title>
+        <mat-icon style="vertical-align:middle;margin-right:6px">movie</mat-icon>
+        Upload Shot
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <div class="cat-form" style="flex-wrap:wrap;gap:12px;align-items:flex-end">
+        <input type="file" accept="video/*" class="file-input"
+               (change)="onShotFileSelected($event)" style="flex:none" />
+        <mat-form-field appearance="outline" class="cat-field">
+          <mat-label>Title</mat-label>
+          <input matInput [(ngModel)]="shotTitle" placeholder="Shot title" />
+        </mat-form-field>
+        <mat-form-field appearance="outline" class="cat-field">
+          <mat-label>Caption</mat-label>
+          <input matInput [(ngModel)]="shotCaption" placeholder="Optional caption" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" class="cat-btn"
+                [disabled]="!shotFile || !shotTitle || shotUploading()"
+                (click)="uploadShot()">
+          @if (shotUploading()) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>upload</mat-icon>
+          }
+          Upload
+        </button>
+      </div>
+    </mat-card-content>
+  </mat-card>
+
   <!-- Product Table -->
   <mat-card class="table-card">
     <mat-card-header>

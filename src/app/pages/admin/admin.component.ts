@@ -17,6 +17,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ProductService } from '../../core/product.service';
+import { ShotsService } from '../../core/shots.service';
 import { Category, Product } from '../../core/models';
 
 interface ProductForm {
@@ -84,6 +85,7 @@ function emptyForm(): ProductForm {
 })
 export class AdminComponent implements OnInit {
   private productSvc = inject(ProductService);
+  private shotsSvc = inject(ShotsService);
   private snackBar = inject(MatSnackBar);
 
   products = signal<Product[]>([]);
@@ -101,6 +103,11 @@ export class AdminComponent implements OnInit {
 
   newCatName = '';
   newCatSlug = '';
+
+  shotFile: File | null = null;
+  shotTitle = '';
+  shotCaption = '';
+  shotUploading = signal(false);
 
   ngOnInit(): void {
     this.loadAll();
@@ -233,6 +240,44 @@ export class AdminComponent implements OnInit {
       },
       error: () => {
         this.snackBar.open('Delete failed. Please try again.', 'Dismiss', { duration: 4000 });
+      },
+    });
+  }
+
+  onShotFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    const file = input.files?.[0] ?? null;
+    this.shotFile = file;
+    if (!file) return;
+    const url = URL.createObjectURL(file);
+    const vid = document.createElement('video');
+    vid.preload = 'metadata';
+    vid.onloadedmetadata = () => {
+      URL.revokeObjectURL(url);
+      if (vid.duration > 60) {
+        this.snackBar.open('Video longer than 1 min will be capped to 60s on playback', 'OK', { duration: 5000 });
+      }
+    };
+    vid.src = url;
+  }
+
+  uploadShot(): void {
+    if (!this.shotFile || !this.shotTitle.trim()) {
+      this.snackBar.open('File and title are required.', 'Dismiss', { duration: 3000 });
+      return;
+    }
+    this.shotUploading.set(true);
+    this.shotsSvc.upload(this.shotFile, this.shotTitle.trim(), this.shotCaption.trim()).subscribe({
+      next: () => {
+        this.shotUploading.set(false);
+        this.shotFile = null;
+        this.shotTitle = '';
+        this.shotCaption = '';
+        this.snackBar.open('Shot uploaded successfully!', 'OK', { duration: 3000 });
+      },
+      error: () => {
+        this.shotUploading.set(false);
+        this.snackBar.open('Shot upload failed. Please try again.', 'Dismiss', { duration: 4000 });
       },
     });
   }

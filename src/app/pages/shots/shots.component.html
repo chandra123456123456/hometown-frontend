@@ -1,0 +1,137 @@
+@if (loading()) {
+  <div class="feed-loading">
+    <mat-icon class="spin-icon">movie</mat-icon>
+    <p>Loading Shots…</p>
+  </div>
+} @else if (states().length === 0) {
+  <div class="feed-empty">
+    <mat-icon>videocam_off</mat-icon>
+    <p>No shots yet. Check back soon!</p>
+  </div>
+} @else {
+  <div class="feed">
+    @for (st of states(); track st.shot.id; let i = $index) {
+      <div class="shot">
+        <!-- Video -->
+        <video
+          #videoEl
+          class="shot-video"
+          [src]="st.shot.videoUrl"
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          (timeupdate)="onTimeUpdate($any($event.target))"
+          (click)="togglePlayPause($any($event.target))"
+        ></video>
+
+        <!-- Overlay info -->
+        <div class="shot-overlay">
+          <div class="shot-meta">
+            <p class="shot-title">{{ st.shot.title }}</p>
+            <p class="shot-caption">{{ st.shot.caption }}</p>
+          </div>
+
+          <!-- Action rail -->
+          <div class="action-rail">
+            <div class="action-item">
+              <button
+                mat-icon-button
+                class="rail-btn"
+                [class.liked]="st.shot.likedByMe"
+                (click)="toggleLike(i)"
+                aria-label="Like"
+              >
+                <mat-icon>{{ st.shot.likedByMe ? 'favorite' : 'favorite_border' }}</mat-icon>
+              </button>
+              <span class="rail-count">{{ st.shot.likeCount }}</span>
+            </div>
+
+            <div class="action-item">
+              <button
+                mat-icon-button
+                class="rail-btn"
+                (click)="openComments(i)"
+                aria-label="Comments"
+              >
+                <mat-icon>chat_bubble_outline</mat-icon>
+              </button>
+              <span class="rail-count">{{ st.shot.commentCount }}</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Comments panel -->
+        @if (st.commentsOpen) {
+          <div class="comments-panel" (click)="$event.stopPropagation()">
+            <div class="comments-header">
+              <span class="comments-title">Comments</span>
+              <button mat-icon-button (click)="closeComments(i)" aria-label="Close">
+                <mat-icon>close</mat-icon>
+              </button>
+            </div>
+
+            <div class="comments-body">
+              @if (st.threads.length === 0 && st.commentsLoaded) {
+                <p class="no-comments">No comments yet. Be the first!</p>
+              }
+              @for (thread of st.threads; track thread.comment.id) {
+                <div class="comment-thread">
+                  <div class="comment">
+                    <span class="comment-user">{{ thread.comment.userName }}</span>
+                    <span class="comment-text">{{ thread.comment.text }}</span>
+                    <span class="comment-date">{{ relativeDate(thread.comment.createdAt) }}</span>
+                    @if (auth.isLoggedIn()) {
+                      <button class="reply-link" (click)="startReply(i, thread.comment.id)">Reply</button>
+                    }
+                  </div>
+
+                  @for (reply of thread.replies; track reply.id) {
+                    <div class="comment comment-reply">
+                      <span class="comment-user">{{ reply.userName }}</span>
+                      <span class="comment-text">{{ reply.text }}</span>
+                      <span class="comment-date">{{ relativeDate(reply.createdAt) }}</span>
+                    </div>
+                  }
+
+                  @if (st.replyingToId === thread.comment.id) {
+                    <div class="reply-input-row">
+                      <input
+                        class="reply-input"
+                        [(ngModel)]="st.replyText"
+                        placeholder="Write a reply…"
+                        (keyup.enter)="postReply(i)"
+                      />
+                      <button mat-icon-button (click)="postReply(i)" aria-label="Send reply">
+                        <mat-icon>send</mat-icon>
+                      </button>
+                      <button mat-icon-button (click)="cancelReply(i)" aria-label="Cancel">
+                        <mat-icon>close</mat-icon>
+                      </button>
+                    </div>
+                  }
+                </div>
+              }
+            </div>
+
+            <div class="comments-input-row">
+              @if (auth.isLoggedIn()) {
+                <input
+                  class="new-comment-input"
+                  [(ngModel)]="st.newCommentText"
+                  placeholder="Add a comment…"
+                  (keyup.enter)="postComment(i)"
+                />
+                <button mat-icon-button (click)="postComment(i)" aria-label="Post comment">
+                  <mat-icon>send</mat-icon>
+                </button>
+              } @else {
+                <a routerLink="/login" class="login-prompt">Log in to comment</a>
+              }
+            </div>
+          </div>
+        }
+      </div>
+    }
+  </div>
+}

@@ -17,6 +17,10 @@
   @if (!isHandset()) {
     <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Shop</a>
     <a mat-button routerLink="/antiques" routerLinkActive="active">Antiques</a>
+    <a mat-button routerLink="/shots" routerLinkActive="active">
+      <mat-icon>play_circle</mat-icon>
+      Shots
+    </a>
     <a mat-button routerLink="/about" routerLinkActive="active">About</a>
     @if (auth.isLoggedIn() && !auth.isAdmin() && !auth.isDeveloper()) {
       <a mat-button routerLink="/custom-order" routerLinkActive="active">Custom Order</a>
@@ -61,6 +65,10 @@
     <mat-nav-list (click)="closeDrawer()">
       <a mat-list-item routerLink="/">Shop</a>
       <a mat-list-item routerLink="/antiques">Antiques</a>
+      <a mat-list-item routerLink="/shots">
+        <mat-icon matListItemIcon>play_circle</mat-icon>
+        Shots
+      </a>
       <a mat-list-item routerLink="/about">About</a>
       @if (!auth.isAdmin()) {
         <a mat-list-item routerLink="/cart">Cart ({{ cart.count() }})</a>

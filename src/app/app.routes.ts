@@ -15,6 +15,7 @@ export const routes: Routes = [
   { path: 'custom-order', loadComponent: () => import('./pages/custom-order/custom-order.component').then(m => m.CustomOrderComponent), canActivate: [authGuard] },
   { path: 'admin/custom', loadComponent: () => import('./pages/admin-custom/admin-custom.component').then(m => m.AdminCustomComponent), canActivate: [adminGuard] },
   { path: 'antiques', loadComponent: () => import('./pages/antiques/antiques.component').then(m => m.AntiquesComponent) },
+  { path: 'shots', loadComponent: () => import('./pages/shots/shots.component').then(m => m.ShotsComponent) },
   { path: 'about', loadComponent: () => import('./pages/ceo/ceo.component').then(m => m.CeoComponent) },
   { path: 'developer', loadComponent: () => import('./pages/developer/developer.component').then(m => m.DeveloperComponent), canActivate: [developerGuard] },
   { path: '**', redirectTo: '' },
