@@ -13,6 +13,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatProgressSpinnerModule } from '@angular/material/progress-spinner';
 
 import { ProductService } from '../../core/product.service';
 import { Category, Product } from '../../core/models';
@@ -58,6 +59,7 @@ function emptyForm(): ProductForm {
     MatExpansionModule,
     MatChipsModule,
     MatSnackBarModule,
+    MatProgressSpinnerModule,
   ],
   templateUrl: './admin.component.html',
   styleUrl: './admin.component.scss',
@@ -75,6 +77,9 @@ export class AdminComponent implements OnInit {
   editingId: number | null = null;
   formPanelOpen = false;
   form: ProductForm = emptyForm();
+  uploading = signal(false);
+  uploadPreviews: string[] = [];
+  selectedFile: File | null = null;
 
   newCatName = '';
   newCatSlug = '';
@@ -118,6 +123,32 @@ export class AdminComponent implements OnInit {
     this.editingId = null;
     this.form = emptyForm();
     this.formPanelOpen = false;
+    this.uploadPreviews = [];
+    this.selectedFile = null;
+  }
+
+  onFileSelected(event: Event): void {
+    const input = event.target as HTMLInputElement;
+    this.selectedFile = input.files?.[0] ?? null;
+  }
+
+  uploadImage(): void {
+    if (!this.selectedFile) return;
+    this.uploading.set(true);
+    this.productSvc.uploadImage(this.selectedFile).subscribe({
+      next: res => {
+        this.uploading.set(false);
+        this.uploadPreviews.push(res.url);
+        const existing = this.form.imageUrlsRaw.trim();
+        this.form.imageUrlsRaw = existing ? `${existing}, ${res.url}` : res.url;
+        this.selectedFile = null;
+        this.snackBar.open('Image uploaded.', 'OK', { duration: 3000 });
+      },
+      error: () => {
+        this.uploading.set(false);
+        this.snackBar.open('Image upload failed.', 'Dismiss', { duration: 4000 });
+      },
+    });
   }
 
   submitForm(): void {

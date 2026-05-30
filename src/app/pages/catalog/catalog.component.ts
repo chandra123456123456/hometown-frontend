@@ -18,6 +18,7 @@ import { CartService } from '../../core/cart.service';
 import { AnalyticsService } from '../../core/analytics.service';
 import { Category, Product } from '../../core/models';
 import { encodeId } from '../../core/id-codec';
+import { ProtectImageDirective } from '../../core/protect-image.directive';
 
 @Component({
   selector: 'app-catalog',
@@ -27,6 +28,7 @@ import { encodeId } from '../../core/id-codec';
     MatCardModule, MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatSelectModule,
     MatChipsModule, MatPaginatorModule, MatProgressSpinnerModule,
+    ProtectImageDirective,
   ],
   templateUrl: './catalog.component.html',
   styleUrl: './catalog.component.scss',

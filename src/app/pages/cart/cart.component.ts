@@ -13,6 +13,7 @@ import { CartService } from '../../core/cart.service';
 import { ProductService } from '../../core/product.service';
 import { Product } from '../../core/models';
 import { encodeId } from '../../core/id-codec';
+import { ProtectImageDirective } from '../../core/protect-image.directive';
 
 interface CartLineView {
   productId: number;
@@ -32,6 +33,7 @@ interface CartLineView {
     MatIconModule,
     MatListModule,
     MatDividerModule,
+    ProtectImageDirective,
   ],
   templateUrl: './cart.component.html',
   styleUrl: './cart.component.scss',

@@ -13,7 +13,8 @@
     @if (product(); as p) {
     <div class="detail-layout">
       <div class="image-col">
-        <img [src]="imageUrl(p)" [alt]="p.name" class="product-image" />
+        <img [src]="imageUrl(p)" [alt]="p.name" class="product-image"
+             appProtectImage draggable="false" />
       </div>
 
       <div class="info-col">

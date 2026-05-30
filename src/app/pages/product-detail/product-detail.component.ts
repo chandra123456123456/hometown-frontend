@@ -16,6 +16,7 @@ import { AnalyticsService } from '../../core/analytics.service';
 import { ShippingService } from '../../core/shipping.service';
 import { Product, ShippingOption } from '../../core/models';
 import { decodeId } from '../../core/id-codec';
+import { ProtectImageDirective } from '../../core/protect-image.directive';
 
 @Component({
   selector: 'app-product-detail',
@@ -24,6 +25,7 @@ import { decodeId } from '../../core/id-codec';
     CommonModule, FormsModule,
     MatCardModule, MatButtonModule, MatIconModule,
     MatFormFieldModule, MatInputModule, MatProgressSpinnerModule,
+    ProtectImageDirective,
   ],
   templateUrl: './product-detail.component.html',
   styleUrl: './product-detail.component.scss',

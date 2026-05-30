@@ -32,7 +32,8 @@
     <div class="product-grid">
       @for (product of products(); track product.id) {
         <mat-card class="product-card" [routerLink]="['/product', encodeId(product.id)]">
-          <img mat-card-image [src]="imageUrl(product)" [alt]="product.name" />
+          <img mat-card-image [src]="imageUrl(product)" [alt]="product.name"
+               appProtectImage draggable="false" />
           <mat-card-content>
             <h3 class="product-name">{{ product.name }}</h3>
             <div class="price-block">

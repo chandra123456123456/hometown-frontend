@@ -168,6 +168,29 @@
         </mat-form-field>
       </div>
 
+      <div class="form-row upload-row">
+        <input type="file" accept="image/*" class="file-input"
+               (change)="onFileSelected($event)" />
+        <button mat-stroked-button type="button"
+                [disabled]="!selectedFile || uploading()"
+                (click)="uploadImage()">
+          @if (uploading()) {
+            <mat-spinner diameter="18" />
+          } @else {
+            <mat-icon>cloud_upload</mat-icon>
+          }
+          Upload image
+        </button>
+      </div>
+
+      @if (uploadPreviews.length > 0) {
+        <div class="upload-previews">
+          @for (url of uploadPreviews; track url) {
+            <img [src]="url" alt="uploaded preview" class="upload-thumb" />
+          }
+        </div>
+      }
+
       <div class="form-row form-row-actions">
         <mat-slide-toggle [(ngModel)]="form.active" color="primary">Active</mat-slide-toggle>
 

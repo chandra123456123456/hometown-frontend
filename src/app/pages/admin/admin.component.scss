@@ -172,6 +172,30 @@
   gap: 10px;
 }
 
+.upload-row {
+  align-items: center;
+  gap: 12px;
+
+  .file-input {
+    flex: 1 1 auto;
+  }
+}
+
+.upload-previews {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  padding: 4px 0 8px;
+}
+
+.upload-thumb {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 4px;
+  border: 1px solid #e0e0e0;
+}
+
 @media (max-width: 599px) {
   .admin-page {
     padding: 16px 8px;

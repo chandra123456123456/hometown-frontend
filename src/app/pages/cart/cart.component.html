@@ -18,7 +18,8 @@
         @for (line of lines(); track line.productId) {
           <div class="cart-line">
             <a [routerLink]="['/product', encodeId(line.productId)]" class="product-thumb-link">
-              <img class="product-thumb" [src]="imageUrl(line.product)" [alt]="line.product.name" />
+              <img class="product-thumb" [src]="imageUrl(line.product)" [alt]="line.product.name"
+                   appProtectImage draggable="false" />
             </a>
 
             <div class="line-info">
