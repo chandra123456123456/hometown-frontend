@@ -18,6 +18,9 @@
     <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Shop</a>
     <a mat-button routerLink="/antiques" routerLinkActive="active">Antiques</a>
     <a mat-button routerLink="/about" routerLinkActive="active">About</a>
+    @if (auth.isLoggedIn() && !auth.isAdmin() && !auth.isDeveloper()) {
+      <a mat-button routerLink="/custom-order" routerLinkActive="active">Custom Order</a>
+    }
     @if (!auth.isAdmin()) {
       <a mat-button routerLink="/cart" routerLinkActive="active">
         <mat-icon [matBadge]="cart.count()" matBadgeColor="accent" [matBadgeHidden]="cart.count() === 0">shopping_cart</mat-icon>
@@ -40,6 +43,7 @@
         @if (auth.isAdmin()) {
           <a mat-menu-item routerLink="/admin/metrics">Seller Metrics</a>
           <a mat-menu-item routerLink="/admin/orders">Manage Orders</a>
+          <a mat-menu-item routerLink="/admin/custom">Custom Orders</a>
         }
         @if (auth.isDeveloper()) {
           <a mat-menu-item routerLink="/developer">API Audit Log</a>
@@ -63,10 +67,14 @@
       }
       @if (auth.isLoggedIn()) {
         <a mat-list-item routerLink="/account">My Orders</a>
+        @if (auth.isLoggedIn() && !auth.isAdmin() && !auth.isDeveloper()) {
+          <a mat-list-item routerLink="/custom-order">Custom Order</a>
+        }
         @if (auth.isAdmin()) {
           <a mat-list-item routerLink="/admin">Admin Dashboard</a>
           <a mat-list-item routerLink="/admin/metrics">Seller Metrics</a>
           <a mat-list-item routerLink="/admin/orders">Manage Orders</a>
+          <a mat-list-item routerLink="/admin/custom">Custom Orders</a>
         }
         @if (auth.isDeveloper()) {
           <a mat-list-item routerLink="/developer">API Audit Log</a>

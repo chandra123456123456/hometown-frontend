@@ -1,0 +1,97 @@
+<div class="admin-custom-page">
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>brush</mat-icon>
+      Custom Order Requests
+    </h1>
+    <a mat-stroked-button routerLink="/admin">
+      <mat-icon>arrow_back</mat-icon>
+      Admin Dashboard
+    </a>
+  </div>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-icon class="spin-icon">sync</mat-icon>
+      <p>Loading custom orders…</p>
+    </div>
+  } @else if (error()) {
+    <div class="error-state">
+      <mat-icon>error_outline</mat-icon>
+      <p>{{ error() }}</p>
+    </div>
+  } @else if (orders().length === 0) {
+    <div class="empty-state">
+      <mat-icon>inbox</mat-icon>
+      <p>No custom order requests yet.</p>
+    </div>
+  } @else {
+    <p class="order-count">{{ orders().length }} request{{ orders().length === 1 ? '' : 's' }}</p>
+    <div class="orders-grid">
+      @for (order of orders(); track order.id) {
+        <mat-card class="order-card">
+          <mat-card-header>
+            <mat-card-title class="order-id">Request #{{ order.id }}</mat-card-title>
+            <mat-card-subtitle>{{ order.createdAt | date:'mediumDate' }}</mat-card-subtitle>
+            <span class="status-chip {{ statusClass(order.status) }}">{{ order.status }}</span>
+          </mat-card-header>
+
+          <mat-card-content>
+            <div class="customer-info">
+              <div class="info-row">
+                <mat-icon>person</mat-icon>
+                <span>{{ order.customerName }}</span>
+              </div>
+              <div class="info-row">
+                <mat-icon>phone</mat-icon>
+                <span>{{ order.customerPhone }}</span>
+              </div>
+              <div class="info-row">
+                <mat-icon>category</mat-icon>
+                <span>{{ order.type | titlecase }}</span>
+              </div>
+            </div>
+
+            @if (getEdit(order.id); as e) {
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Description</mat-label>
+                <textarea matInput rows="3" [(ngModel)]="e.description" [name]="'desc-' + order.id"></textarea>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Status</mat-label>
+                <mat-select [(ngModel)]="e.status" [name]="'status-' + order.id">
+                  @for (s of statuses; track s) {
+                    <mat-option [value]="s">{{ s }}</mat-option>
+                  }
+                </mat-select>
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Quoted Price (₹)</mat-label>
+                <input matInput type="number" min="0" [(ngModel)]="e.quotedPrice" [name]="'price-' + order.id" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Delivery Date</mat-label>
+                <input matInput type="date" [(ngModel)]="e.deliveryDate" [name]="'date-' + order.id" />
+              </mat-form-field>
+
+              <mat-form-field appearance="outline" class="full-width">
+                <mat-label>Admin Notes</mat-label>
+                <textarea matInput rows="2" [(ngModel)]="e.adminNotes" [name]="'notes-' + order.id"></textarea>
+              </mat-form-field>
+            }
+          </mat-card-content>
+
+          <mat-card-actions align="end">
+            <button mat-raised-button color="primary" (click)="save(order)" [disabled]="isSaving(order.id)">
+              <mat-icon>save</mat-icon>
+              Save
+            </button>
+          </mat-card-actions>
+        </mat-card>
+      }
+    </div>
+  }
+</div>

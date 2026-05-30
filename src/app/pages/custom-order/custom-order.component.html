@@ -1,0 +1,100 @@
+<div class="custom-order-page">
+  <div class="page-header">
+    <h1 class="page-title">
+      <mat-icon>brush</mat-icon>
+      Custom Order
+    </h1>
+  </div>
+
+  <p class="intro-text">
+    Commission a one-of-a-kind painting or sketch — tell us what you want, leave your phone number,
+    and our team will call you to finalise the design, price and delivery date.
+  </p>
+
+  <mat-card class="form-card">
+    <mat-card-header>
+      <mat-card-title>Place a Request</mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <form class="order-form" (ngSubmit)="submit()">
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Type</mat-label>
+          <mat-select [ngModel]="type()" (ngModelChange)="type.set($event)" name="type" required>
+            <mat-option value="PAINTING">Painting</mat-option>
+            <mat-option value="SKETCH">Sketch</mat-option>
+          </mat-select>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Description</mat-label>
+          <textarea matInput rows="4"
+            placeholder="Describe the painting/sketch you want"
+            [ngModel]="description()" (ngModelChange)="description.set($event)"
+            name="description" required></textarea>
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Your Name</mat-label>
+          <input matInput [ngModel]="customerName()" (ngModelChange)="customerName.set($event)"
+            name="customerName" required />
+        </mat-form-field>
+
+        <mat-form-field appearance="outline" class="full-width">
+          <mat-label>Phone Number</mat-label>
+          <input matInput type="tel" [ngModel]="customerPhone()" (ngModelChange)="customerPhone.set($event)"
+            name="customerPhone" required />
+        </mat-form-field>
+
+        <button mat-raised-button color="primary" type="submit" [disabled]="submitting()">
+          <mat-icon>send</mat-icon>
+          Submit Request
+        </button>
+      </form>
+    </mat-card-content>
+  </mat-card>
+
+  <h2 class="section-title">My Requests</h2>
+
+  @if (loading()) {
+    <div class="loading-state">
+      <mat-icon class="spin-icon">sync</mat-icon>
+      <p>Loading your requests…</p>
+    </div>
+  } @else if (requests().length === 0) {
+    <div class="empty-state">
+      <mat-icon>palette</mat-icon>
+      <p>No requests yet. Use the form above to place your first custom order.</p>
+    </div>
+  } @else {
+    <div class="requests-grid">
+      @for (req of requests(); track req.id) {
+        <mat-card class="request-card">
+          <mat-card-header>
+            <mat-card-title class="req-type">{{ req.type | titlecase }}</mat-card-title>
+            <mat-card-subtitle>{{ req.createdAt | date:'mediumDate' }}</mat-card-subtitle>
+            <span class="status-chip {{ statusClass(req.status) }}">{{ req.status }}</span>
+          </mat-card-header>
+          <mat-card-content>
+            <p class="req-description">{{ req.description }}</p>
+            <div class="req-meta">
+              <div class="meta-row">
+                <mat-icon>payments</mat-icon>
+                <span>{{ priceDisplay(req) }}</span>
+              </div>
+              <div class="meta-row">
+                <mat-icon>event</mat-icon>
+                <span>{{ deliveryDisplay(req) }}</span>
+              </div>
+              @if (req.adminNotes) {
+                <div class="meta-row notes-row">
+                  <mat-icon>note</mat-icon>
+                  <span>{{ req.adminNotes }}</span>
+                </div>
+              }
+            </div>
+          </mat-card-content>
+        </mat-card>
+      }
+    </div>
+  }
+</div>
