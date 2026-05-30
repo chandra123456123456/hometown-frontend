@@ -65,6 +65,22 @@
   padding: 0 6px 6px;
 }
 
+.search-row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  margin-bottom: 16px;
+}
+
+.filter-toggle {
+  display: none; // desktop: filters always shown, no toggle needed
+  white-space: nowrap;
+}
+
+.filter-wrap {
+  display: block;
+}
+
 .filters {
   display: flex;
   flex-wrap: wrap;
@@ -75,7 +91,7 @@
 
 .search-field {
   flex: 1 1 260px;
-  min-width: 200px;
+  min-width: 160px;
 }
 
 .category-field {
@@ -235,6 +251,30 @@ mat-paginator {
 @media (max-width: 599px) {
   .catalog-page {
     padding: 16px 8px;
+  }
+
+  // Collapsible filters on phone — hidden until the Filters toggle is tapped.
+  .filter-toggle {
+    display: inline-flex;
+  }
+
+  .filter-wrap {
+    display: none;
+  }
+
+  .filter-wrap.open {
+    display: block;
+  }
+
+  .filters,
+  .filter-bar {
+    margin-bottom: 12px;
+  }
+
+  .category-field,
+  .sort-field,
+  .price-field {
+    flex: 1 1 100%;
   }
 
   .product-grid {

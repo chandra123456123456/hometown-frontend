@@ -61,7 +61,8 @@ export class LoginComponent {
 
     this.auth.login(email, password).subscribe({
       next: async () => {
-        await this.cart.flushAfterLogin();
+        try { await this.cart.flushAfterLogin(); } catch { /* cart sync is non-fatal */ }
+        this.loading.set(false);
         this.snackBar.open('Welcome back!', 'Close', { duration: 3000 });
         this.router.navigate(['/']);
       },

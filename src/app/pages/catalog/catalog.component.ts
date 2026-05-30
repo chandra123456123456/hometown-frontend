@@ -50,6 +50,7 @@ export class CatalogComponent implements OnInit {
   totalElements = signal(0);
   loading = signal(false);
   suggestions = signal<Product[]>([]);
+  filtersOpen = signal(false);
 
   searchQuery = '';
   selectedCategoryId: number | null = null;
