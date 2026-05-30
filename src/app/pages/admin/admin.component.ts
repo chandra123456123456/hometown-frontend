@@ -33,6 +33,9 @@ interface ProductForm {
   lengthCm: number | null;
   widthCm: number | null;
   heightCm: number | null;
+  artType: string;
+  artWidthCm: number | null;
+  artHeightCm: number | null;
 }
 
 function emptyForm(): ProductForm {
@@ -50,6 +53,9 @@ function emptyForm(): ProductForm {
     lengthCm: null,
     widthCm: null,
     heightCm: null,
+    artType: 'NONE',
+    artWidthCm: null,
+    artHeightCm: null,
   };
 }
 
@@ -132,6 +138,9 @@ export class AdminComponent implements OnInit {
       lengthCm: null,
       widthCm: null,
       heightCm: null,
+      artType: product.artType ?? 'NONE',
+      artWidthCm: product.artWidthCm ?? null,
+      artHeightCm: product.artHeightCm ?? null,
     };
     this.formPanelOpen = true;
   }
@@ -194,6 +203,9 @@ export class AdminComponent implements OnInit {
     if (this.form.lengthCm != null) body['lengthCm'] = this.form.lengthCm;
     if (this.form.widthCm != null) body['widthCm'] = this.form.widthCm;
     if (this.form.heightCm != null) body['heightCm'] = this.form.heightCm;
+    body['artType'] = this.form.artType;
+    if (this.form.artWidthCm != null) body['artWidthCm'] = this.form.artWidthCm;
+    if (this.form.artHeightCm != null) body['artHeightCm'] = this.form.artHeightCm;
 
     const op = this.editingId != null
       ? this.productSvc.update(this.editingId, body)

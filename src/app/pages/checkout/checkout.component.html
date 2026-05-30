@@ -115,6 +115,20 @@
                   </div>
                   <span class="item-total">₹{{ line.lineTotal }}</span>
                 </div>
+                @if (line.product.framable && frameOptionsMap[line.productId] && frameOptionsMap[line.productId].length) {
+                  <div class="frame-select-row">
+                    <mat-form-field appearance="outline" class="frame-field">
+                      <mat-label>Frame</mat-label>
+                      <mat-select
+                        [ngModel]="selectedFrame[line.productId]"
+                        (ngModelChange)="onFrameChange(line.productId, $event)">
+                        @for (opt of frameOptionsMap[line.productId]; track opt.type) {
+                          <mat-option [value]="opt.type">{{ opt.label }} — ₹{{ opt.price }}</mat-option>
+                        }
+                      </mat-select>
+                    </mat-form-field>
+                  </div>
+                }
               }
             </div>
 
@@ -124,6 +138,13 @@
               <span>Items subtotal</span>
               <span>₹{{ subtotal() }}</span>
             </div>
+
+            @if (framingSubtotal() > 0) {
+              <div class="summary-row">
+                <span>Framing</span>
+                <span>₹{{ framingSubtotal() }}</span>
+              </div>
+            }
 
             <div class="summary-row">
               <span>Shipping</span>

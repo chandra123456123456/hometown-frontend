@@ -19,6 +19,16 @@ export interface Product {
   avgRating?: number;
   reviewCount?: number;
   antique?: boolean;
+  artType?: string;
+  framable?: boolean;
+  artWidthCm?: number;
+  artHeightCm?: number;
+}
+
+export interface FrameOption {
+  type: string;
+  label: string;
+  price: number;
 }
 
 export interface Review {

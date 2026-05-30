@@ -198,6 +198,28 @@
       }
 
       <div class="form-row">
+        <mat-form-field appearance="outline" class="form-field">
+          <mat-label>Art type</mat-label>
+          <mat-select [(ngModel)]="form.artType">
+            <mat-option value="NONE">None</mat-option>
+            <mat-option value="SKETCH">Sketch</mat-option>
+            <mat-option value="PAINTING">Painting</mat-option>
+            <mat-option value="CANVAS">Canvas</mat-option>
+          </mat-select>
+        </mat-form-field>
+        @if (form.artType !== 'NONE') {
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Art width (cm)</mat-label>
+            <input matInput type="number" min="0" [(ngModel)]="form.artWidthCm" placeholder="e.g. 40" />
+          </mat-form-field>
+          <mat-form-field appearance="outline" class="form-field">
+            <mat-label>Art height (cm)</mat-label>
+            <input matInput type="number" min="0" [(ngModel)]="form.artHeightCm" placeholder="e.g. 60" />
+          </mat-form-field>
+        }
+      </div>
+
+      <div class="form-row">
         <span class="dims-label">Shipping details (internal — not shown to customers)</span>
       </div>
       <div class="form-row">

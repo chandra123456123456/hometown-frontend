@@ -13,6 +13,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatDividerModule } from '@angular/material/divider';
+import { MatSelectModule } from '@angular/material/select';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 
@@ -20,7 +21,7 @@ import { CartService } from '../../core/cart.service';
 import { ProductService } from '../../core/product.service';
 import { OrderService } from '../../core/order.service';
 import { AnalyticsService } from '../../core/analytics.service';
-import { Product, ShippingOption } from '../../core/models';
+import { FrameOption, Product, ShippingOption } from '../../core/models';
 import { environment } from '../../../environments/environment';
 import { encodeId } from '../../core/id-codec';
 import { StockDialogComponent, StockIssue } from './stock-dialog.component';
@@ -47,6 +48,7 @@ interface CheckoutLine {
     MatInputModule,
     MatRadioModule,
     MatDividerModule,
+    MatSelectModule,
     MatDialogModule,
   ],
   templateUrl: './checkout.component.html',
@@ -64,7 +66,11 @@ export class CheckoutComponent implements OnInit {
 
   lines = signal<CheckoutLine[]>([]);
   subtotal = signal(0);
+  framingSubtotal = signal(0);
   loading = signal(true);
+
+  frameOptionsMap: Record<number, FrameOption[]> = {};
+  selectedFrame: Record<number, string> = {};
 
   shippingAddress = '';
   destPincode = '';
@@ -87,6 +93,7 @@ export class CheckoutComponent implements OnInit {
     if (!items.length) {
       this.lines.set([]);
       this.subtotal.set(0);
+      this.framingSubtotal.set(0);
       this.loading.set(false);
       return;
     }
@@ -100,10 +107,45 @@ export class CheckoutComponent implements OnInit {
         }));
         this.lines.set(built);
         this.subtotal.set(built.reduce((s, l) => s + l.lineTotal, 0));
-        this.loading.set(false);
+
+        const framable = built.filter(l => l.product.framable);
+        if (!framable.length) {
+          this.loading.set(false);
+          return;
+        }
+        forkJoin(framable.map(l => this.productSvc.frameOptions(l.productId))).subscribe({
+          next: results => {
+            framable.forEach((l, i) => {
+              this.frameOptionsMap[l.productId] = results[i];
+              if (this.selectedFrame[l.productId] == null) {
+                this.selectedFrame[l.productId] = 'NONE';
+              }
+            });
+            this.recomputeFraming();
+            this.loading.set(false);
+          },
+          error: () => this.loading.set(false),
+        });
       },
       error: () => this.loading.set(false),
     });
+  }
+
+  recomputeFraming(): void {
+    let total = 0;
+    for (const line of this.lines()) {
+      if (!line.product.framable) continue;
+      const frameType = this.selectedFrame[line.productId] ?? 'NONE';
+      const opts = this.frameOptionsMap[line.productId] ?? [];
+      const opt = opts.find(o => o.type === frameType);
+      if (opt) total += opt.price * line.quantity;
+    }
+    this.framingSubtotal.set(total);
+  }
+
+  onFrameChange(productId: number, frameType: string): void {
+    this.selectedFrame[productId] = frameType;
+    this.recomputeFraming();
   }
 
   pincodeInvalid(): boolean {
@@ -140,7 +182,7 @@ export class CheckoutComponent implements OnInit {
   }
 
   get grandTotal(): number {
-    return this.subtotal() + (this.selectedOption()?.charge ?? 0);
+    return this.subtotal() + this.framingSubtotal() + (this.selectedOption()?.charge ?? 0);
   }
 
   get canPlace(): boolean {
@@ -204,7 +246,11 @@ export class CheckoutComponent implements OnInit {
   private async doPlaceOrder(): Promise<void> {
     const option = this.selectedOption()!;
     this.orderSvc.create({
-      items: this.cartSvc.items().map(i => ({ productId: i.productId, quantity: i.quantity })),
+      items: this.cartSvc.items().map(i => ({
+        productId: i.productId,
+        quantity: i.quantity,
+        frameType: this.selectedFrame[i.productId] || 'NONE',
+      })),
       shippingAddress: this.shippingAddress.trim(),
       destPincode: this.destPincode,
       shippingPartner: option.partner,

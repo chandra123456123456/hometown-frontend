@@ -38,6 +38,7 @@ export class AppComponent implements OnInit {
     { initialValue: false },
   );
   drawerOpen = signal(false);
+  showLogo = signal(true);
 
   ngOnInit(): void {
     this.cart.load();

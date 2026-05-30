@@ -2,7 +2,7 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient, HttpParams } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Category, Page, Product, Review } from './models';
+import { Category, FrameOption, Page, Product, Review } from './models';
 
 @Injectable({ providedIn: 'root' })
 export class ProductService {
@@ -62,6 +62,10 @@ export class ProductService {
 
   createCategory(name: string, slug: string): Observable<Category> {
     return this.http.post<Category>(`${this.base}/categories`, { name, slug });
+  }
+
+  frameOptions(productId: number): Observable<FrameOption[]> {
+    return this.http.get<FrameOption[]>(`${this.base}/products/${productId}/frame-options`);
   }
 
   uploadImage(file: File): Observable<{ code: string; url: string; previewUrl: string; contentType: string }> {

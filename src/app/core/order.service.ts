@@ -2,10 +2,16 @@ import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
-import { Order, OrderLine, ShippingOption } from './models';
+import { Order, ShippingOption } from './models';
+
+export interface OrderLineWithFrame {
+  productId: number;
+  quantity: number;
+  frameType?: string;
+}
 
 export interface CreateOrderRequest {
-  items: OrderLine[];
+  items: OrderLineWithFrame[];
   shippingAddress: string;
   destPincode: string;
   shippingPartner: string;

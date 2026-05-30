@@ -5,7 +5,11 @@
     </button>
   }
   <a routerLink="/" class="brand">
-    <mat-icon>storefront</mat-icon>
+    @if (showLogo()) {
+      <img src="assets/logo.png" alt="HomeTown" class="brand-logo" (error)="showLogo.set(false)" />
+    } @else {
+      <mat-icon>storefront</mat-icon>
+    }
     <span>HomeTown</span>
   </a>
   <span class="spacer"></span>

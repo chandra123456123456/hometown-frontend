@@ -19,6 +19,14 @@
   margin-right: 2px;
 }
 
+.brand-logo {
+  height: 38px;
+  width: 38px;
+  object-fit: contain;
+  border-radius: 50%;
+  background: #fff;
+}
+
 .active {
   font-weight: 700;
 }
