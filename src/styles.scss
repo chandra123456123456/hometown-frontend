@@ -1,0 +1,31 @@
+@use '@angular/material' as mat;
+
+@include mat.core();
+
+$ht-primary: mat.define-palette(mat.$brown-palette, 600);
+$ht-accent: mat.define-palette(mat.$amber-palette, A400, A100, A700);
+$ht-warn: mat.define-palette(mat.$red-palette);
+
+$ht-theme: mat.define-light-theme((
+  color: (primary: $ht-primary, accent: $ht-accent, warn: $ht-warn),
+  typography: mat.define-typography-config(),
+  density: 0,
+));
+
+@include mat.all-component-themes($ht-theme);
+
+html, body { height: 100%; }
+body {
+  margin: 0;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  background: #faf7f2;
+  color: #2b2b2b;
+}
+
+* { box-sizing: border-box; }
+
+.ht-container { max-width: 1200px; margin: 0 auto; padding: 16px; }
+.spacer { flex: 1 1 auto; }
+.muted { color: rgba(0, 0, 0, 0.6); }
+.price { font-weight: 600; }
+.strike { text-decoration: line-through; color: rgba(0, 0, 0, 0.45); font-weight: 400; margin-right: 6px; }

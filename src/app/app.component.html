@@ -1,0 +1,79 @@
+<mat-toolbar color="primary" class="topbar">
+  @if (isHandset()) {
+    <button mat-icon-button (click)="toggleDrawer()" aria-label="Menu">
+      <mat-icon>menu</mat-icon>
+    </button>
+  }
+  <a routerLink="/" class="brand">
+    <mat-icon>storefront</mat-icon>
+    <span>HomeTown</span>
+  </a>
+  <span class="spacer"></span>
+
+  @if (!isHandset()) {
+    <a mat-button routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">Shop</a>
+    <a mat-button routerLink="/cart" routerLinkActive="active">
+      <mat-icon [matBadge]="cart.count()" matBadgeColor="accent" [matBadgeHidden]="cart.count() === 0">shopping_cart</mat-icon>
+      Cart
+    </a>
+    @if (auth.isAdmin()) {
+      <a mat-button routerLink="/admin" routerLinkActive="active">Admin</a>
+    }
+    @if (auth.isLoggedIn()) {
+      <button mat-button [matMenuTriggerFor]="menu">
+        <mat-icon>account_circle</mat-icon>
+        {{ auth.user()?.name }}
+      </button>
+      <mat-menu #menu="matMenu">
+        <a mat-menu-item routerLink="/account">My Orders</a>
+        @if (auth.isAdmin()) {
+          <a mat-menu-item routerLink="/admin/metrics">Seller Metrics</a>
+        }
+        <button mat-menu-item (click)="logout()">Logout</button>
+      </mat-menu>
+    } @else {
+      <a mat-button routerLink="/login">Login</a>
+    }
+  }
+</mat-toolbar>
+
+<mat-sidenav-container class="shell">
+  <mat-sidenav [opened]="isHandset() && drawerOpen()" mode="over" (closed)="closeDrawer()">
+    <mat-nav-list (click)="closeDrawer()">
+      <a mat-list-item routerLink="/">Shop</a>
+      <a mat-list-item routerLink="/cart">Cart ({{ cart.count() }})</a>
+      @if (auth.isLoggedIn()) {
+        <a mat-list-item routerLink="/account">My Orders</a>
+        @if (auth.isAdmin()) {
+          <a mat-list-item routerLink="/admin">Admin Dashboard</a>
+          <a mat-list-item routerLink="/admin/metrics">Seller Metrics</a>
+        }
+        <a mat-list-item (click)="logout()">Logout</a>
+      } @else {
+        <a mat-list-item routerLink="/login">Login</a>
+        <a mat-list-item routerLink="/register">Register</a>
+      }
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <main class="content">
+      <router-outlet></router-outlet>
+    </main>
+
+    @if (isHandset()) {
+      <nav class="bottom-nav">
+        <a routerLink="/" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">
+          <mat-icon>home</mat-icon><span>Home</span>
+        </a>
+        <a routerLink="/cart" routerLinkActive="active">
+          <mat-icon [matBadge]="cart.count()" matBadgeColor="accent" [matBadgeHidden]="cart.count() === 0">shopping_cart</mat-icon>
+          <span>Cart</span>
+        </a>
+        <a [routerLink]="auth.isLoggedIn() ? '/account' : '/login'" routerLinkActive="active">
+          <mat-icon>person</mat-icon><span>Account</span>
+        </a>
+      </nav>
+    }
+  </mat-sidenav-content>
+</mat-sidenav-container>
